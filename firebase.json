@@ -13,7 +13,6 @@
     "frameworksBackend": {
       "region": "us-east1",
       "maxInstances": 10,
-      "minInstances": 1,
       "concurrency": 80,
       "memory": "512MiB",
       "cpu": 1

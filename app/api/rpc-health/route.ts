@@ -1,5 +1,6 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { executeWithProviderFallback } from "@/lib/rpc-provider";
+import { jsonResponse } from "@/lib/json-response";
 
 export async function GET(request: NextRequest) {
   try {
@@ -41,12 +42,12 @@ export async function GET(request: NextRequest) {
       backoffMultiplier: 2
     });
     
-    return NextResponse.json(result);
+    return jsonResponse(result);
   } catch (error) {
     console.error("RPC health check failed:", error);
-    return NextResponse.json(
-      { 
-        success: false, 
+    return jsonResponse(
+      {
+        success: false,
         error: (error as Error).message,
         suggestions: [
           "Check your network connection",

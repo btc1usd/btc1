@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
           success: true,
           network: {
             name: network.name,
-            chainId: network.chainId,
+            chainId: network.chainId.toString(),
           },
           latestBlock: blockNumber,
           chainId: chainIdResult,

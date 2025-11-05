@@ -1931,15 +1931,15 @@ export function TreasuryDashboard({ isAdmin }: { isAdmin: boolean }) {
 
           {/* Dev Wallet Dialog */}
           <Dialog open={showAddDevWallet} onOpenChange={setShowAddDevWallet}>
-            <DialogContent className="bg-gradient-to-br from-gray-800 to-gray-900 border-gray-700 text-white">
+            <DialogContent className="bg-gradient-to-br from-gray-800 to-gray-900 border-gray-700 text-white max-w-[calc(100%-2rem)] sm:max-w-md max-h-[90vh] overflow-y-auto">
               <DialogHeader>
-                <DialogTitle className="text-2xl text-white">Add Development Wallet</DialogTitle>
-                <DialogDescription className="text-gray-400">
+                <DialogTitle className="text-lg sm:text-xl lg:text-2xl text-white">Add Development Wallet</DialogTitle>
+                <DialogDescription className="text-xs sm:text-sm text-gray-400">
                   Add a new wallet to receive development fee distributions
                 </DialogDescription>
               </DialogHeader>
-              <div className="space-y-4 py-4">
-                <div className="space-y-2">
+              <div className="space-y-3 sm:space-y-4 py-3 sm:py-4">
+                <div className="space-y-1.5">
                   <Label htmlFor="dev-name" className="text-sm font-medium text-gray-300">
                     Wallet Name *
                   </Label>
@@ -1948,10 +1948,10 @@ export function TreasuryDashboard({ isAdmin }: { isAdmin: boolean }) {
                     value={newDevPayee.name}
                     onChange={(e) => setNewDevPayee({ ...newDevPayee, name: e.target.value })}
                     placeholder="e.g., Core Developer Fund"
-                    className="bg-gray-700 border-gray-600 text-white placeholder:text-gray-400"
+                    className="bg-gray-700 border-gray-600 text-white placeholder:text-gray-400 h-10 text-sm"
                   />
                 </div>
-                <div className="space-y-2">
+                <div className="space-y-1.5">
                   <Label htmlFor="dev-wallet" className="text-sm font-medium text-gray-300">
                     Wallet Address *
                   </Label>
@@ -1960,10 +1960,10 @@ export function TreasuryDashboard({ isAdmin }: { isAdmin: boolean }) {
                     value={newDevPayee.wallet}
                     onChange={(e) => setNewDevPayee({ ...newDevPayee, wallet: e.target.value })}
                     placeholder="0x..."
-                    className="bg-gray-700 border-gray-600 text-white placeholder:text-gray-400 font-mono text-xs"
+                    className="bg-gray-700 border-gray-600 text-white placeholder:text-gray-400 font-mono text-xs sm:text-sm h-10"
                   />
                 </div>
-                <div className="space-y-2">
+                <div className="space-y-1.5">
                   <Label htmlFor="dev-description" className="text-sm font-medium text-gray-300">
                     Description (Optional)
                   </Label>
@@ -1972,34 +1972,34 @@ export function TreasuryDashboard({ isAdmin }: { isAdmin: boolean }) {
                     value={newDevPayee.description}
                     onChange={(e) => setNewDevPayee({ ...newDevPayee, description: e.target.value })}
                     placeholder="Purpose of this wallet..."
-                    className="bg-gray-700 border-gray-600 text-white placeholder:text-gray-400 resize-none"
+                    className="bg-gray-700 border-gray-600 text-white placeholder:text-gray-400 resize-none text-sm min-h-[72px]"
                     rows={3}
                   />
                 </div>
               </div>
-              <DialogFooter>
+              <DialogFooter className="flex-col xs:flex-row gap-2">
                 <Button
                   variant="outline"
                   onClick={() => setShowAddDevWallet(false)}
                   disabled={isPending || isConfirming}
-                  className="border-gray-600 text-gray-300 hover:bg-gray-700 py-2 px-4 text-sm sm:text-base"
+                  className="border-gray-600 text-gray-300 hover:bg-gray-700 h-10 px-4 text-sm w-full xs:w-auto"
                 >
                   Cancel
                 </Button>
                 <Button
                   onClick={handleAddDevPayee}
                   disabled={!isConnected || isPending || isConfirming}
-                  className="bg-orange-500 hover:bg-orange-600 text-white disabled:opacity-50 disabled:cursor-not-allowed py-2 px-4 text-sm sm:text-base relative z-10"
+                  className="bg-orange-500 hover:bg-orange-600 text-white disabled:opacity-50 disabled:cursor-not-allowed h-10 px-4 text-sm w-full xs:w-auto"
                 >
                   {!isConnected ? (
                     <>
                       <AlertCircle className="h-4 w-4 mr-2" />
-                      Connect Wallet First
+                      <span className="truncate">Connect Wallet First</span>
                     </>
                   ) : isPending || isConfirming ? (
                     <>
                       <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin mr-2"></div>
-                      {isPending ? "Confirm in wallet..." : "Confirming..."}
+                      <span className="truncate">{isPending ? "Confirm in wallet..." : "Confirming..."}</span>
                     </>
                   ) : (
                     <>
@@ -2014,61 +2014,61 @@ export function TreasuryDashboard({ isAdmin }: { isAdmin: boolean }) {
 
           {/* Non-Profit Dialog */}
           <Dialog open={showAddNonProfit} onOpenChange={setShowAddNonProfit}>
-            <DialogContent className="bg-gradient-to-br from-gray-800 to-gray-900 border-gray-700 text-white max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl mx-4">
+            <DialogContent className="bg-gradient-to-br from-gray-800 to-gray-900 border-gray-700 text-white max-w-[calc(100%-2rem)] sm:max-w-lg max-h-[90vh] overflow-y-auto">
               <DialogHeader>
-                <DialogTitle className="text-xl sm:text-2xl text-white">
+                <DialogTitle className="text-lg sm:text-xl lg:text-2xl text-white">
                   {isAdmin ? "Add New Non-Profit" : "Propose New Non-Profit"}
                 </DialogTitle>
-                <DialogDescription className="text-gray-400 text-sm">
+                <DialogDescription className="text-xs sm:text-sm text-gray-400">
                   {isAdmin
                     ? "Directly add a verified non-profit organization"
                     : "Submit a proposal to add a new organization (requires 1,000 BTC1)"}
                 </DialogDescription>
               </DialogHeader>
-              <div className="space-y-4 py-4">
-                <div className="space-y-2">
+              <div className="space-y-3 sm:space-y-4 py-3 sm:py-4">
+                <div className="space-y-1.5">
                   <Label className="text-sm font-medium text-gray-300">Organization Name *</Label>
                   <Input
                     value={proposalForm.name}
                     onChange={(e) => setProposalForm({ ...proposalForm, name: e.target.value })}
                     placeholder="e.g., Red Cross International"
-                    className="bg-gray-700 border-gray-600 text-white placeholder:text-gray-400"
+                    className="bg-gray-700 border-gray-600 text-white placeholder:text-gray-400 h-10 text-sm"
                   />
                 </div>
-                <div className="space-y-2">
+                <div className="space-y-1.5">
                   <Label className="text-sm font-medium text-gray-300">Description *</Label>
                   <Textarea
                     value={proposalForm.description}
                     onChange={(e) => setProposalForm({ ...proposalForm, description: e.target.value })}
                     placeholder="Brief description of the organization"
                     rows={3}
-                    className="bg-gray-700 border-gray-600 text-white placeholder:text-gray-400 resize-none"
+                    className="bg-gray-700 border-gray-600 text-white placeholder:text-gray-400 resize-none text-sm min-h-[72px]"
                   />
                 </div>
-                <div className="space-y-2">
+                <div className="space-y-1.5">
                   <Label className="text-sm font-medium text-gray-300">Wallet Address *</Label>
                   <Input
                     value={proposalForm.wallet}
                     onChange={(e) => setProposalForm({ ...proposalForm, wallet: e.target.value })}
                     placeholder="0x..."
-                    className="bg-gray-700 border-gray-600 text-white placeholder:text-gray-400 font-mono text-xs"
+                    className="bg-gray-700 border-gray-600 text-white placeholder:text-gray-400 font-mono text-xs sm:text-sm h-10"
                   />
                 </div>
-                <div className="space-y-2">
+                <div className="space-y-1.5">
                   <Label className="text-sm font-medium text-gray-300">Website</Label>
                   <Input
                     value={proposalForm.website || ""}
                     onChange={(e) => setProposalForm({ ...proposalForm, website: e.target.value })}
                     placeholder="https://..."
-                    className="bg-gray-700 border-gray-600 text-white placeholder:text-gray-400"
+                    className="bg-gray-700 border-gray-600 text-white placeholder:text-gray-400 h-10 text-sm"
                   />
                 </div>
-                <div className="space-y-2">
+                <div className="space-y-1.5">
                   <Label className="text-sm font-medium text-gray-300">Category *</Label>
                   <select
                     value={proposalForm.category}
                     onChange={(e) => setProposalForm({ ...proposalForm, category: e.target.value })}
-                    className="w-full px-3 py-2 rounded-lg border border-gray-600 bg-gray-700 text-white"
+                    className="w-full px-3 py-2.5 h-10 rounded-lg border border-gray-600 bg-gray-700 text-white text-sm focus:border-pink-500 focus:ring-pink-500"
                   >
                     <option value="Humanitarian" className="bg-gray-700">Humanitarian</option>
                     <option value="Zakat" className="bg-gray-700">Zakat</option>
@@ -2080,34 +2080,34 @@ export function TreasuryDashboard({ isAdmin }: { isAdmin: boolean }) {
                   </select>
                 </div>
               </div>
-              <DialogFooter>
+              <DialogFooter className="flex-col xs:flex-row gap-2">
                 <Button
                   variant="outline"
                   onClick={() => setShowAddNonProfit(false)}
                   disabled={isPending || isConfirming}
-                  className="border-gray-600 text-gray-300 hover:bg-gray-700 text-sm sm:text-base"
+                  className="border-gray-600 text-gray-300 hover:bg-gray-700 h-10 px-4 text-sm w-full xs:w-auto"
                 >
                   Cancel
                 </Button>
                 <Button
                   onClick={handleAddNonProfitToContract}
-                  className="bg-pink-500 hover:bg-pink-600 text-white disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
+                  className="bg-pink-500 hover:bg-pink-600 text-white disabled:opacity-50 disabled:cursor-not-allowed h-10 px-4 text-sm w-full xs:w-auto"
                   disabled={!isConnected || isPending || isConfirming}
                 >
                   {!isConnected ? (
                     <>
                       <AlertCircle className="h-4 w-4 mr-2" />
-                      Connect Wallet First
+                      <span className="truncate">Connect Wallet First</span>
                     </>
                   ) : isPending || isConfirming ? (
                     <>
                       <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin mr-2"></div>
-                      {isPending ? "Confirm in wallet..." : "Confirming..."}
+                      <span className="truncate">{isPending ? "Confirm in wallet..." : "Confirming..."}</span>
                     </>
                   ) : (
                     <>
                       <Plus className="h-4 w-4 mr-2" />
-                      {isAdmin ? "Add Organization" : "Submit Proposal"}
+                      <span className="truncate">{isAdmin ? "Add Organization" : "Submit Proposal"}</span>
                     </>
                   )}
                 </Button>

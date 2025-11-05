@@ -596,151 +596,163 @@ export function EndowmentManager({ isAdmin }: EndowmentManagerProps) {
 
       {/* Add Non-Profit Modal (Admin) */}
       {showAddNonProfit && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <Card className="w-full max-w-2xl gradient-card border-border/50">
-            <CardHeader>
-              <CardTitle>Add New Non-Profit (Admin)</CardTitle>
-              <CardDescription>Directly add a non-profit organization</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <Label>Organization Name *</Label>
-                <Input
-                  value={formData.name}
-                  onChange={(e) => setFormData({...formData, name: e.target.value})}
-                  placeholder="e.g., Red Cross International"
-                />
-              </div>
-              <div>
-                <Label>Description *</Label>
-                <Textarea
-                  value={formData.description}
-                  onChange={(e) => setFormData({...formData, description: e.target.value})}
-                  placeholder="Brief description of the organization"
-                  rows={3}
-                />
-              </div>
-              <div>
-                <Label>Wallet Address *</Label>
-                <Input
-                  value={formData.wallet}
-                  onChange={(e) => setFormData({...formData, wallet: e.target.value})}
-                  placeholder="0x..."
-                />
-              </div>
-              <div>
-                <Label>Website</Label>
-                <Input
-                  value={formData.website}
-                  onChange={(e) => setFormData({...formData, website: e.target.value})}
-                  placeholder="https://..."
-                />
-              </div>
-              <div>
-                <Label>Category *</Label>
-                <Select value={formData.category} onValueChange={(v) => setFormData({...formData, category: v})}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {CATEGORIES.map(cat => (
-                      <SelectItem key={cat.id} value={cat.id.toString()}>
-                        {cat.icon} {cat.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="flex justify-end gap-2 pt-4">
-                <Button variant="outline" onClick={() => { setShowAddNonProfit(false); resetForm(); }} disabled={isPending || isConfirming}>
-                  Cancel
-                </Button>
-                <Button
-                  onClick={handleAddNonProfit}
-                  className="gradient-primary"
-                  disabled={isPending || isConfirming}
-                >
-                  {isPending ? "Waiting for wallet..." : isConfirming ? "Confirming..." : "Add Organization"}
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 overflow-y-auto">
+          <div className="min-h-screen flex items-start sm:items-center justify-center p-3 sm:p-4 py-6 sm:py-8">
+            <Card className="w-full max-w-2xl gradient-card border-border/50 my-auto">
+              <CardHeader className="sticky top-0 bg-gradient-to-br from-gray-900 to-gray-800 rounded-t-lg z-10 pb-3 sm:pb-4">
+                <CardTitle className="text-lg sm:text-xl lg:text-2xl">Add New Non-Profit (Admin)</CardTitle>
+                <CardDescription className="text-xs sm:text-sm">Directly add a non-profit organization</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-3 sm:space-y-4 pt-4 sm:pt-6 pb-4 sm:pb-6">
+                <div className="space-y-1.5">
+                  <Label className="text-sm">Organization Name *</Label>
+                  <Input
+                    value={formData.name}
+                    onChange={(e) => setFormData({...formData, name: e.target.value})}
+                    placeholder="e.g., Red Cross International"
+                    className="h-10 text-sm"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-sm">Description *</Label>
+                  <Textarea
+                    value={formData.description}
+                    onChange={(e) => setFormData({...formData, description: e.target.value})}
+                    placeholder="Brief description of the organization"
+                    rows={3}
+                    className="resize-none text-sm min-h-[72px]"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-sm">Wallet Address *</Label>
+                  <Input
+                    value={formData.wallet}
+                    onChange={(e) => setFormData({...formData, wallet: e.target.value})}
+                    placeholder="0x..."
+                    className="font-mono text-xs sm:text-sm h-10"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-sm">Website</Label>
+                  <Input
+                    value={formData.website}
+                    onChange={(e) => setFormData({...formData, website: e.target.value})}
+                    placeholder="https://..."
+                    className="h-10 text-sm"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-sm">Category *</Label>
+                  <Select value={formData.category} onValueChange={(v) => setFormData({...formData, category: v})}>
+                    <SelectTrigger className="h-10 text-sm">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="max-h-[240px]">
+                      {CATEGORIES.map(cat => (
+                        <SelectItem key={cat.id} value={cat.id.toString()} className="text-sm">
+                          {cat.icon} {cat.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="flex flex-col-reverse xs:flex-row justify-end gap-2 pt-3 sm:pt-4">
+                  <Button variant="outline" onClick={() => { setShowAddNonProfit(false); resetForm(); }} disabled={isPending || isConfirming} className="h-10 px-4 text-sm w-full xs:w-auto">
+                    Cancel
+                  </Button>
+                  <Button
+                    onClick={handleAddNonProfit}
+                    className="gradient-primary h-10 px-4 text-sm w-full xs:w-auto"
+                    disabled={isPending || isConfirming}
+                  >
+                    <span className="truncate">{isPending ? "Waiting for wallet..." : isConfirming ? "Confirming..." : "Add Organization"}</span>
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       )}
 
       {/* Propose Non-Profit Modal (Users) */}
       {showProposeNonProfit && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <Card className="w-full max-w-2xl gradient-card border-border/50">
-            <CardHeader>
-              <CardTitle>Propose New Non-Profit</CardTitle>
-              <CardDescription>
-                Submit a proposal to add a new organization (requires 1,000 BTC1USD)
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <Label>Organization Name *</Label>
-                <Input
-                  value={formData.name}
-                  onChange={(e) => setFormData({...formData, name: e.target.value})}
-                  placeholder="e.g., Doctors Without Borders"
-                />
-              </div>
-              <div>
-                <Label>Description *</Label>
-                <Textarea
-                  value={formData.description}
-                  onChange={(e) => setFormData({...formData, description: e.target.value})}
-                  placeholder="Brief description"
-                  rows={3}
-                />
-              </div>
-              <div>
-                <Label>Wallet Address *</Label>
-                <Input
-                  value={formData.wallet}
-                  onChange={(e) => setFormData({...formData, wallet: e.target.value})}
-                  placeholder="0x..."
-                />
-              </div>
-              <div>
-                <Label>Website</Label>
-                <Input
-                  value={formData.website}
-                  onChange={(e) => setFormData({...formData, website: e.target.value})}
-                  placeholder="https://..."
-                />
-              </div>
-              <div>
-                <Label>Category *</Label>
-                <Select value={formData.category} onValueChange={(v) => setFormData({...formData, category: v})}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {CATEGORIES.map(cat => (
-                      <SelectItem key={cat.id} value={cat.id.toString()}>
-                        {cat.icon} {cat.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="flex justify-end gap-2 pt-4">
-                <Button variant="outline" onClick={() => { setShowProposeNonProfit(false); resetForm(); }} disabled={isPending || isConfirming}>
-                  Cancel
-                </Button>
-                <Button
-                  onClick={handleProposeNonProfit}
-                  className="gradient-primary"
-                  disabled={isPending || isConfirming}
-                >
-                  {isPending ? "Waiting for wallet..." : isConfirming ? "Confirming..." : "Submit Proposal"}
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 overflow-y-auto">
+          <div className="min-h-screen flex items-start sm:items-center justify-center p-3 sm:p-4 py-6 sm:py-8">
+            <Card className="w-full max-w-2xl gradient-card border-border/50 my-auto">
+              <CardHeader className="sticky top-0 bg-gradient-to-br from-gray-900 to-gray-800 rounded-t-lg z-10 pb-3 sm:pb-4">
+                <CardTitle className="text-lg sm:text-xl lg:text-2xl">Propose New Non-Profit</CardTitle>
+                <CardDescription className="text-xs sm:text-sm">
+                  Submit a proposal to add a new organization (requires 1,000 BTC1USD)
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-3 sm:space-y-4 pt-4 sm:pt-6 pb-4 sm:pb-6">
+                <div className="space-y-1.5">
+                  <Label className="text-sm">Organization Name *</Label>
+                  <Input
+                    value={formData.name}
+                    onChange={(e) => setFormData({...formData, name: e.target.value})}
+                    placeholder="e.g., Doctors Without Borders"
+                    className="h-10 text-sm"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-sm">Description *</Label>
+                  <Textarea
+                    value={formData.description}
+                    onChange={(e) => setFormData({...formData, description: e.target.value})}
+                    placeholder="Brief description"
+                    rows={3}
+                    className="resize-none text-sm min-h-[72px]"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-sm">Wallet Address *</Label>
+                  <Input
+                    value={formData.wallet}
+                    onChange={(e) => setFormData({...formData, wallet: e.target.value})}
+                    placeholder="0x..."
+                    className="font-mono text-xs sm:text-sm h-10"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-sm">Website</Label>
+                  <Input
+                    value={formData.website}
+                    onChange={(e) => setFormData({...formData, website: e.target.value})}
+                    placeholder="https://..."
+                    className="h-10 text-sm"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-sm">Category *</Label>
+                  <Select value={formData.category} onValueChange={(v) => setFormData({...formData, category: v})}>
+                    <SelectTrigger className="h-10 text-sm">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="max-h-[240px]">
+                      {CATEGORIES.map(cat => (
+                        <SelectItem key={cat.id} value={cat.id.toString()} className="text-sm">
+                          {cat.icon} {cat.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="flex flex-col-reverse xs:flex-row justify-end gap-2 pt-3 sm:pt-4">
+                  <Button variant="outline" onClick={() => { setShowProposeNonProfit(false); resetForm(); }} disabled={isPending || isConfirming} className="h-10 px-4 text-sm w-full xs:w-auto">
+                    Cancel
+                  </Button>
+                  <Button
+                    onClick={handleProposeNonProfit}
+                    className="gradient-primary h-10 px-4 text-sm w-full xs:w-auto"
+                    disabled={isPending || isConfirming}
+                  >
+                    <span className="truncate">{isPending ? "Waiting for wallet..." : isConfirming ? "Confirming..." : "Submit Proposal"}</span>
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       )}
     </div>

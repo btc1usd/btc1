@@ -1290,70 +1290,71 @@ export function UnifiedGovernanceDashboard({ userBalance = 0, isAdmin = false }:
 
       {/* Create Proposal Modal (Admin Only) */}
       {showCreateProposal && isAdmin && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-200 overflow-y-auto">
-          <div className="w-full max-w-3xl my-8">
-            <Card className="w-full bg-gradient-to-br from-gray-900 to-gray-800 border-orange-500/30 shadow-2xl shadow-orange-500/20">
-              <CardHeader className="border-b border-gray-700 pb-4 sticky top-0 bg-gradient-to-br from-gray-900 to-gray-800 z-10">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center">
-                    <Plus className="w-6 h-6 text-white" />
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 overflow-y-auto animate-in fade-in duration-200">
+          <div className="min-h-screen flex items-start sm:items-center justify-center p-3 sm:p-4 py-6 sm:py-8">
+            <Card className="w-full max-w-3xl bg-gradient-to-br from-gray-900 to-gray-800 border-orange-500/30 shadow-2xl shadow-orange-500/20 my-auto">
+              {/* Header */}
+              <CardHeader className="border-b border-gray-700 pb-3 sm:pb-4 bg-gradient-to-br from-gray-900 to-gray-800 rounded-t-lg sticky top-0 z-20">
+                <div className="flex items-start gap-2 sm:gap-3">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center flex-shrink-0 mt-0.5 sm:mt-0">
+                    <Plus className="w-4 h-4 sm:w-6 sm:h-6 text-white" />
                   </div>
-                  <div>
-                    <CardTitle className="text-2xl text-white">Create New Proposal</CardTitle>
-                    <CardDescription className="text-gray-400">Create a proposal for community voting</CardDescription>
+                  <div className="flex-1 min-w-0">
+                    <CardTitle className="text-base sm:text-xl lg:text-2xl text-white leading-tight">Create New Proposal</CardTitle>
+                    <CardDescription className="text-xs sm:text-sm text-gray-400 mt-0.5 sm:mt-1">Create a proposal for community voting</CardDescription>
                   </div>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setShowCreateProposal(false)}
+                    className="text-gray-400 hover:text-white hover:bg-gray-800 flex-shrink-0 h-8 w-8 sm:h-10 sm:w-10 -mt-1 sm:mt-0"
+                  >
+                    <CloseIcon className="w-4 h-4 sm:w-5 sm:h-5" />
+                  </Button>
                 </div>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setShowCreateProposal(false)}
-                  className="text-gray-400 hover:text-white hover:bg-gray-800"
-                >
-                  <CloseIcon className="w-5 h-5" />
-                </Button>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-6 pt-6">
-              <div className="space-y-2">
-                <Label htmlFor="proposal-title" className="text-white font-medium">Proposal Title</Label>
+              </CardHeader>
+
+              {/* Content */}
+              <CardContent className="space-y-4 sm:space-y-6 pt-4 sm:pt-6 pb-4 sm:pb-6">
+              <div className="space-y-1.5">
+                <Label htmlFor="proposal-title" className="text-white font-medium text-sm">Proposal Title</Label>
                 <Input
                   id="proposal-title"
                   placeholder="e.g., Increase Collateral Ratio to 125%"
                   value={proposalForm.title}
                   onChange={(e) => setProposalForm({ ...proposalForm, title: e.target.value })}
-                  className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-orange-500"
+                  className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-orange-500 focus:ring-orange-500 h-10 text-sm"
                 />
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="proposal-description" className="text-white font-medium">Description</Label>
+              <div className="space-y-1.5">
+                <Label htmlFor="proposal-description" className="text-white font-medium text-sm">Description</Label>
                 <Textarea
                   id="proposal-description"
                   placeholder="Explain the proposal and its benefits..."
-                  rows={4}
+                  rows={3}
                   value={proposalForm.description}
                   onChange={(e) => setProposalForm({ ...proposalForm, description: e.target.value })}
-                  className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-orange-500"
+                  className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-orange-500 focus:ring-orange-500 text-sm resize-none min-h-[72px]"
                 />
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="proposal-category" className="text-white font-medium">Category</Label>
+              <div className="space-y-1.5">
+                <Label htmlFor="proposal-category" className="text-white font-medium text-sm">Category</Label>
                 <Select
                   value={proposalForm.category.toString()}
                   onValueChange={(value) => setProposalForm({ ...proposalForm, category: parseInt(value) })}
                 >
-                  <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
+                  <SelectTrigger className="bg-gray-800 border-gray-700 text-white focus:border-orange-500 focus:ring-orange-500 h-10 text-sm">
                     <SelectValue placeholder="Select category" />
                   </SelectTrigger>
-                  <SelectContent className="bg-gray-800 border-gray-700">
+                  <SelectContent className="bg-gray-800 border-gray-700 max-h-[240px]">
                     {PROPOSAL_CATEGORIES.map((cat) => {
                       const Icon = cat.icon
                       return (
-                        <SelectItem key={cat.id} value={cat.id.toString()} className="text-white hover:bg-gray-700">
+                        <SelectItem key={cat.id} value={cat.id.toString()} className="text-white hover:bg-gray-700 text-sm">
                           <div className="flex items-center gap-2">
-                            <Icon className="w-4 h-4" />
+                            <Icon className="w-3.5 h-3.5" />
                             <span>{cat.name}</span>
                           </div>
                         </SelectItem>
@@ -1368,96 +1369,97 @@ export function UnifiedGovernanceDashboard({ userBalance = 0, isAdmin = false }:
 
               {/* Category-specific fields */}
               {proposalForm.category === 0 && (
-                <div className="space-y-4 p-5 border border-orange-500/30 rounded-lg bg-orange-500/5">
-                  <h4 className="font-semibold text-white flex items-center gap-2">
-                    <Settings className="w-5 h-5 text-orange-500" />
-                    Parameter Change Details
+                <div className="space-y-3 p-3 sm:p-4 border border-orange-500/30 rounded-lg bg-orange-500/5">
+                  <h4 className="font-semibold text-white flex items-center gap-2 text-sm">
+                    <Settings className="w-4 h-4 text-orange-500 flex-shrink-0" />
+                    <span>Parameter Change Details</span>
                   </h4>
-                  <div className="space-y-2">
-                    <Label className="text-white font-medium">Parameter to Change</Label>
+                  <div className="space-y-1.5">
+                    <Label className="text-white font-medium text-sm">Parameter to Change</Label>
                     <Select
                       value={proposalForm.parameter}
                       onValueChange={(value) => setProposalForm({ ...proposalForm, parameter: value })}
                     >
-                      <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
+                      <SelectTrigger className="bg-gray-800 border-gray-700 text-white focus:border-orange-500 h-10 text-sm">
                         <SelectValue placeholder="Select parameter" />
                       </SelectTrigger>
                       <SelectContent className="bg-gray-800 border-gray-700">
-                        <SelectItem value="minCollateralRatio" className="text-white hover:bg-gray-700">Min Collateral Ratio</SelectItem>
-                        <SelectItem value="devFeeMint" className="text-white hover:bg-gray-700">Dev Fee (Mint)</SelectItem>
-                        <SelectItem value="devFeeRedeem" className="text-white hover:bg-gray-700">Dev Fee (Redeem)</SelectItem>
+                        <SelectItem value="minCollateralRatio" className="text-white hover:bg-gray-700 text-sm">Min Collateral Ratio</SelectItem>
+                        <SelectItem value="devFeeMint" className="text-white hover:bg-gray-700 text-sm">Dev Fee (Mint)</SelectItem>
+                        <SelectItem value="devFeeRedeem" className="text-white hover:bg-gray-700 text-sm">Dev Fee (Redeem)</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
-                  <div className="space-y-2">
-                    <Label className="text-white font-medium">New Value (in decimal, e.g., 1.25 for 125%)</Label>
+                  <div className="space-y-1.5">
+                    <Label className="text-white font-medium text-sm">New Value</Label>
                     <Input
                       type="number"
                       step="0.01"
-                      placeholder="e.g., 1.25"
+                      placeholder="e.g., 1.25 for 125%"
                       value={proposalForm.newValue}
                       onChange={(e) => setProposalForm({ ...proposalForm, newValue: e.target.value })}
-                      className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-orange-500"
+                      className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-orange-500 focus:ring-orange-500 h-10 text-sm"
                     />
+                    <p className="text-xs text-gray-400">Enter decimal value (e.g., 1.25 for 125%)</p>
                   </div>
                 </div>
               )}
 
               {proposalForm.category === 4 && (
-                <div className="space-y-4 p-5 border border-pink-500/30 rounded-lg bg-pink-500/5">
-                  <h4 className="font-semibold text-white flex items-center gap-2">
-                    <Heart className="w-5 h-5 text-pink-500" />
-                    Non-Profit Organization Details
+                <div className="space-y-3 p-3 sm:p-4 border border-pink-500/30 rounded-lg bg-pink-500/5">
+                  <h4 className="font-semibold text-white flex items-center gap-2 text-sm">
+                    <Heart className="w-4 h-4 text-pink-500 flex-shrink-0" />
+                    <span>Non-Profit Organization Details</span>
                   </h4>
-                  <div className="space-y-2">
-                    <Label className="text-white font-medium">Organization Name</Label>
+                  <div className="space-y-1.5">
+                    <Label className="text-white font-medium text-sm">Organization Name</Label>
                     <Input
                       placeholder="e.g., Islamic Relief"
                       value={proposalForm.nonProfitName}
                       onChange={(e) => setProposalForm({ ...proposalForm, nonProfitName: e.target.value })}
-                      className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-pink-500"
+                      className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-pink-500 focus:ring-pink-500 h-10 text-sm"
                     />
                   </div>
-                  <div className="space-y-2">
-                    <Label className="text-white font-medium">Wallet Address</Label>
+                  <div className="space-y-1.5">
+                    <Label className="text-white font-medium text-sm">Wallet Address</Label>
                     <Input
                       placeholder="0x..."
                       value={proposalForm.nonProfitWallet}
                       onChange={(e) => setProposalForm({ ...proposalForm, nonProfitWallet: e.target.value })}
-                      className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-pink-500"
+                      className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-pink-500 focus:ring-pink-500 h-10 text-sm font-mono"
                     />
                   </div>
-                  <div className="space-y-2">
-                    <Label className="text-white font-medium">Organization Description</Label>
+                  <div className="space-y-1.5">
+                    <Label className="text-white font-medium text-sm">Organization Description</Label>
                     <Textarea
                       placeholder="Brief description of the organization's mission"
                       rows={2}
                       value={proposalForm.nonProfitDescription}
                       onChange={(e) => setProposalForm({ ...proposalForm, nonProfitDescription: e.target.value })}
-                      className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-pink-500"
+                      className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-pink-500 focus:ring-pink-500 text-sm resize-none min-h-[60px]"
                     />
                   </div>
-                  <div className="space-y-2">
-                    <Label className="text-white font-medium">Website (optional)</Label>
+                  <div className="space-y-1.5">
+                    <Label className="text-white font-medium text-sm">Website (optional)</Label>
                     <Input
                       placeholder="https://..."
                       value={proposalForm.nonProfitWebsite}
                       onChange={(e) => setProposalForm({ ...proposalForm, nonProfitWebsite: e.target.value })}
-                      className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-pink-500"
+                      className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-pink-500 focus:ring-pink-500 h-10 text-sm"
                     />
                   </div>
-                  <div className="space-y-2">
-                    <Label className="text-white font-medium">Category</Label>
+                  <div className="space-y-1.5">
+                    <Label className="text-white font-medium text-sm">Category</Label>
                     <Select
                       value={proposalForm.nonProfitCategory.toString()}
                       onValueChange={(value) => setProposalForm({ ...proposalForm, nonProfitCategory: parseInt(value) })}
                     >
-                      <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
+                      <SelectTrigger className="bg-gray-800 border-gray-700 text-white focus:border-pink-500 h-10 text-sm">
                         <SelectValue placeholder="Select category" />
                       </SelectTrigger>
-                      <SelectContent className="bg-gray-800 border-gray-700">
+                      <SelectContent className="bg-gray-800 border-gray-700 max-h-[200px]">
                         {CATEGORY_NAMES.map((name, idx) => (
-                          <SelectItem key={idx} value={idx.toString()} className="text-white hover:bg-gray-700">{name}</SelectItem>
+                          <SelectItem key={idx} value={idx.toString()} className="text-white hover:bg-gray-700 text-sm">{name}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
@@ -1466,67 +1468,69 @@ export function UnifiedGovernanceDashboard({ userBalance = 0, isAdmin = false }:
               )}
 
               {proposalForm.category === 1 && (
-                <div className="space-y-4 p-5 border border-blue-500/30 rounded-lg bg-blue-500/5">
-                  <h4 className="font-semibold text-white flex items-center gap-2">
-                    <Code className="w-5 h-5 text-blue-500" />
-                    Contract Upgrade Details
+                <div className="space-y-3 p-3 sm:p-4 border border-blue-500/30 rounded-lg bg-blue-500/5">
+                  <h4 className="font-semibold text-white flex items-center gap-2 text-sm">
+                    <Code className="w-4 h-4 text-blue-500 flex-shrink-0" />
+                    <span>Contract Upgrade Details</span>
                   </h4>
-                  <div className="space-y-2">
-                    <Label className="text-white font-medium">Contract Name</Label>
+                  <div className="space-y-1.5">
+                    <Label className="text-white font-medium text-sm">Contract Name</Label>
                     <Select
                       value={proposalForm.contractName}
                       onValueChange={(value) => setProposalForm({ ...proposalForm, contractName: value })}
                     >
-                      <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
+                      <SelectTrigger className="bg-gray-800 border-gray-700 text-white focus:border-blue-500 h-10 text-sm">
                         <SelectValue placeholder="Select contract" />
                       </SelectTrigger>
                       <SelectContent className="bg-gray-800 border-gray-700">
-                        <SelectItem value="vault" className="text-white hover:bg-gray-700">Vault</SelectItem>
-                        <SelectItem value="endowment" className="text-white hover:bg-gray-700">Endowment Manager</SelectItem>
-                        <SelectItem value="distribution" className="text-white hover:bg-gray-700">Weekly Distribution</SelectItem>
+                        <SelectItem value="vault" className="text-white hover:bg-gray-700 text-sm">Vault</SelectItem>
+                        <SelectItem value="endowment" className="text-white hover:bg-gray-700 text-sm">Endowment Manager</SelectItem>
+                        <SelectItem value="distribution" className="text-white hover:bg-gray-700 text-sm">Weekly Distribution</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
-                  <div className="space-y-2">
-                    <Label className="text-white font-medium">New Contract Address</Label>
+                  <div className="space-y-1.5">
+                    <Label className="text-white font-medium text-sm">New Contract Address</Label>
                     <Input
                       placeholder="0x..."
                       value={proposalForm.newContractAddress}
                       onChange={(e) => setProposalForm({ ...proposalForm, newContractAddress: e.target.value })}
-                      className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-blue-500"
+                      className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-blue-500 focus:ring-blue-500 h-10 text-sm font-mono"
                     />
                   </div>
                 </div>
               )}
 
-              <div className="pt-4 border-t border-gray-700">
-                <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4 space-y-2">
-                  <p className="text-sm text-gray-300 flex items-center gap-2">
-                    <AlertCircle className="w-4 h-4 text-blue-400" />
-                    <span>
+              {/* Info Notice */}
+              <div className="pt-3 border-t border-gray-700 mt-1">
+                <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-3 space-y-1.5">
+                  <p className="text-xs text-gray-300 flex items-start gap-2">
+                    <AlertCircle className="w-3.5 h-3.5 text-blue-400 flex-shrink-0 mt-0.5" />
+                    <span className="flex-1">
                       Quorum Required: <strong className="text-blue-400">{PROPOSAL_CATEGORIES.find(c => c.id === proposalForm.category)?.id === 0 ? "4%" :
                         PROPOSAL_CATEGORIES.find(c => c.id === proposalForm.category)?.id === 1 ? "10%" :
                         PROPOSAL_CATEGORIES.find(c => c.id === proposalForm.category)?.id === 4 ? "3%" :
                         PROPOSAL_CATEGORIES.find(c => c.id === proposalForm.category)?.id === 5 ? "2%" : "Varies"}%</strong> of total supply
                     </span>
                   </p>
-                  <p className="text-xs text-gray-400 pl-6">
+                  <p className="text-xs text-gray-400 pl-5">
                     After proposal passes, there's a 2-day timelock before execution
                   </p>
                 </div>
               </div>
 
-              <div className="flex flex-col-reverse xs:flex-row justify-end gap-2 sm:gap-3 pt-2">
+              {/* Action Buttons */}
+              <div className="flex flex-col-reverse xs:flex-row justify-end gap-2 pt-4 border-t border-gray-700 mt-4">
                 <Button
                   variant="outline"
                   onClick={() => setShowCreateProposal(false)}
                   disabled={isCreatingProposal}
-                  className="border-gray-700 text-gray-300 hover:bg-gray-800 hover:text-white h-9 sm:h-10 text-sm sm:text-base"
+                  className="border-gray-700 text-gray-300 hover:bg-gray-800 hover:text-white h-10 text-sm w-full xs:w-auto px-5"
                 >
                   Cancel
                 </Button>
                 <Button
-                  className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white shadow-lg shadow-orange-500/30 h-9 sm:h-10 text-sm sm:text-base"
+                  className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white shadow-lg shadow-orange-500/30 h-10 text-sm w-full xs:w-auto px-5"
                   onClick={handleCreateProposal}
                   disabled={isCreatingProposal}
                 >
@@ -1543,7 +1547,7 @@ export function UnifiedGovernanceDashboard({ userBalance = 0, isAdmin = false }:
                   )}
                 </Button>
               </div>
-            </CardContent>
+              </CardContent>
             </Card>
           </div>
         </div>

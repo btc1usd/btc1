@@ -933,97 +933,101 @@ proposal.votesAbstain.toLocaleString()}</div>
 
       {/* Create Proposal Modal */}
       {showCreateProposal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-2 sm:p-4 overflow-y-auto">
-          <Card className="w-full max-w-2xl bg-gradient-to-br from-gray-800 to-gray-900 border-gray-700 shadow-xl my-4 sm:my-auto">
-            <CardHeader>
-              <CardTitle className="text-white text-lg sm:text-xl md:text-2xl">Create New Proposal</CardTitle>
-              <CardDescription className="text-gray-400 text-sm md:text-base">Submit a proposal for community voting</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-3 sm:space-y-4">
-              <div>
-                <Label htmlFor="proposal-title" className="text-gray-300 text-sm md:text-base">Title</Label>
-                <Input id="proposal-title" placeholder="Enter proposal title" className="bg-gray-700 border-gray-600 text-white placeholder:text-gray-400 mt-1.5 h-9 sm:h-10 md:h-11 text-sm sm:text-base" />
-              </div>
-              <div>
-                <Label htmlFor="proposal-category" className="text-gray-300 text-sm md:text-base">Category</Label>
-                <Select>
-                  <SelectTrigger className="bg-gray-700 border-gray-600 text-white mt-1.5 h-9 sm:h-10 md:h-11 text-sm sm:text-base">
-                    <SelectValue placeholder="Select category" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-gray-800 border-gray-700">
-                    <SelectItem value="parameter">Protocol Parameters</SelectItem>
-                    <SelectItem value="emergency">Emergency Actions</SelectItem>
-                    <SelectItem value="upgrade">Contract Upgrades</SelectItem>
-                    <SelectItem value="treasury">Treasury Management</SelectItem>
-                    <SelectItem value="governance">Governance Changes</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label htmlFor="proposal-description" className="text-gray-300 text-sm md:text-base">Description</Label>
-                <Textarea
-                  id="proposal-description"
-                  placeholder="Provide detailed description of the proposal"
-                  rows={4}
-                  className="bg-gray-700 border-gray-600 text-white placeholder:text-gray-400 resize-none mt-1.5 text-sm sm:text-base"
-                />
-              </div>
-              <div className="flex flex-col-reverse sm:flex-row justify-end gap-2 sm:space-x-2">
-                <Button
-                  variant="outline"
-                  onClick={() => setShowCreateProposal(false)}
-                  className="w-full sm:w-auto border-gray-600 text-gray-300 hover:bg-gray-700 h-9 sm:h-10"
-                >
-                  Cancel
-                </Button>
-                <Button className="w-full sm:w-auto bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 shadow-md h-9 sm:h-10">
-                  Submit Proposal
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 overflow-y-auto">
+          <div className="min-h-screen flex items-start sm:items-center justify-center p-3 sm:p-4 py-6 sm:py-8">
+            <Card className="w-full max-w-2xl bg-gradient-to-br from-gray-800 to-gray-900 border-gray-700 shadow-xl my-auto">
+              <CardHeader className="sticky top-0 bg-gradient-to-br from-gray-800 to-gray-900 rounded-t-lg z-10 pb-3 sm:pb-4">
+                <CardTitle className="text-white text-lg sm:text-xl lg:text-2xl">Create New Proposal</CardTitle>
+                <CardDescription className="text-gray-400 text-xs sm:text-sm">Submit a proposal for community voting</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-3 sm:space-y-4 pt-4 sm:pt-6 pb-4 sm:pb-6">
+                <div className="space-y-1.5">
+                  <Label htmlFor="proposal-title" className="text-gray-300 text-sm">Title</Label>
+                  <Input id="proposal-title" placeholder="Enter proposal title" className="bg-gray-700 border-gray-600 text-white placeholder:text-gray-400 h-10 text-sm" />
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="proposal-category" className="text-gray-300 text-sm">Category</Label>
+                  <Select>
+                    <SelectTrigger className="bg-gray-700 border-gray-600 text-white h-10 text-sm">
+                      <SelectValue placeholder="Select category" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-gray-800 border-gray-700 max-h-[240px]">
+                      <SelectItem value="parameter" className="text-sm">Protocol Parameters</SelectItem>
+                      <SelectItem value="emergency" className="text-sm">Emergency Actions</SelectItem>
+                      <SelectItem value="upgrade" className="text-sm">Contract Upgrades</SelectItem>
+                      <SelectItem value="treasury" className="text-sm">Treasury Management</SelectItem>
+                      <SelectItem value="governance" className="text-sm">Governance Changes</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="proposal-description" className="text-gray-300 text-sm">Description</Label>
+                  <Textarea
+                    id="proposal-description"
+                    placeholder="Provide detailed description of the proposal"
+                    rows={4}
+                    className="bg-gray-700 border-gray-600 text-white placeholder:text-gray-400 resize-none text-sm min-h-[96px]"
+                  />
+                </div>
+                <div className="flex flex-col-reverse xs:flex-row justify-end gap-2 pt-3 sm:pt-4">
+                  <Button
+                    variant="outline"
+                    onClick={() => setShowCreateProposal(false)}
+                    className="w-full xs:w-auto border-gray-600 text-gray-300 hover:bg-gray-700 h-10 px-4 text-sm"
+                  >
+                    Cancel
+                  </Button>
+                  <Button className="w-full xs:w-auto bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 shadow-md h-10 px-4 text-sm">
+                    Submit Proposal
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       )}
 
       {/* Delegate Modal */}
       {showDelegate && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <Card className="w-full max-w-md bg-gradient-to-br from-gray-800 to-gray-900 border-gray-700 shadow-xl">
-            <CardHeader>
-              <CardTitle className="text-white text-lg sm:text-xl">Delegate Your Votes</CardTitle>
-              <CardDescription className="text-gray-400 text-sm">Enter the address to delegate your voting power to</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <Label htmlFor="delegate-address" className="text-gray-300 text-sm">Delegate Address</Label>
-                <Input
-                  id="delegate-address"
-                  placeholder="0x..."
-                  value={delegateAddress}
-                  onChange={(e) => setDelegateAddress(e.target.value)}
-                  className="bg-gray-700 border-gray-600 text-white placeholder:text-gray-400 font-mono mt-1.5 text-sm"
-                />
-              </div>
-              <div className="text-xs sm:text-sm text-gray-400">
-                Your voting power of {votingPower.toLocaleString()} votes will be delegated to this address.
-              </div>
-              <div className="flex flex-col-reverse sm:flex-row justify-end gap-2 sm:space-x-2">
-                <Button
-                  variant="outline"
-                  onClick={() => setShowDelegate(false)}
-                  className="w-full sm:w-auto border-gray-600 text-gray-300 hover:bg-gray-700"
-                >
-                  Cancel
-                </Button>
-                <Button
-                  className="w-full sm:w-auto bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 shadow-md"
-                  onClick={handleDelegate}
-                >
-                  Delegate
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 overflow-y-auto">
+          <div className="min-h-screen flex items-start sm:items-center justify-center p-3 sm:p-4 py-6 sm:py-8">
+            <Card className="w-full max-w-md bg-gradient-to-br from-gray-800 to-gray-900 border-gray-700 shadow-xl my-auto">
+              <CardHeader className="pb-3 sm:pb-4">
+                <CardTitle className="text-white text-lg sm:text-xl">Delegate Your Votes</CardTitle>
+                <CardDescription className="text-gray-400 text-xs sm:text-sm">Enter the address to delegate your voting power to</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-3 sm:space-y-4 pt-2 sm:pt-4 pb-4 sm:pb-6">
+                <div className="space-y-1.5">
+                  <Label htmlFor="delegate-address" className="text-gray-300 text-sm">Delegate Address</Label>
+                  <Input
+                    id="delegate-address"
+                    placeholder="0x..."
+                    value={delegateAddress}
+                    onChange={(e) => setDelegateAddress(e.target.value)}
+                    className="bg-gray-700 border-gray-600 text-white placeholder:text-gray-400 font-mono h-10 text-xs sm:text-sm"
+                  />
+                </div>
+                <div className="text-xs text-gray-400 p-3 bg-gray-700/30 rounded-lg border border-gray-600/50">
+                  Your voting power of <strong className="text-white">{votingPower.toLocaleString()}</strong> votes will be delegated to this address.
+                </div>
+                <div className="flex flex-col-reverse xs:flex-row justify-end gap-2 pt-2">
+                  <Button
+                    variant="outline"
+                    onClick={() => setShowDelegate(false)}
+                    className="w-full xs:w-auto border-gray-600 text-gray-300 hover:bg-gray-700 h-10 px-4 text-sm"
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    className="w-full xs:w-auto bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 shadow-md h-10 px-4 text-sm"
+                    onClick={handleDelegate}
+                  >
+                    Delegate
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       )}
       </div>

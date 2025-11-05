@@ -2361,7 +2361,7 @@ function Dashboard() {
       {/* Sidebar - Responsive width based on device and state */}
       <div
         className={
-          "fixed left-0 top-0 h-full bg-card border-r border-border transition-all duration-300 z-50 " +
+          "fixed left-0 top-0 h-screen bg-card border-r border-border transition-all duration-300 z-50 flex flex-col " +
           (isMobile
             ? "w-16"  // Fixed narrow width for mobile (icon size only)
             : sidebarOpen
@@ -2371,7 +2371,7 @@ function Dashboard() {
         }
       >
         {/* Header - Redesigned for better alignment */}
-        <div className="w-full border-b border-border">
+        <div className="w-full border-b border-border flex-shrink-0">
           {sidebarOpen ? (
             // Expanded state: Logo + Text on left, Toggle on right
             <div className="flex items-center justify-between p-4 h-16">
@@ -2421,8 +2421,8 @@ function Dashboard() {
         {/* Search */}
         {/* Removed search bar as per user request */}
 
-        {/* Navigation */}
-        <nav className="px-2 py-4 space-y-1">
+        {/* Navigation - Scrollable container */}
+        <nav className="px-2 py-4 space-y-1 flex-1 overflow-y-auto overflow-x-hidden">
           {isMobile ? (
             // Mobile view with icons only in a compact grid
             <div className="grid grid-cols-1 gap-1">

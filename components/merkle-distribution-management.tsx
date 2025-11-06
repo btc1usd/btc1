@@ -1348,19 +1348,19 @@ This action cannot be undone. Continue?`;
       {/* Hero Section with Status */}
       <Card className="gradient-card border-border/50">
         <CardHeader>
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle className="text-2xl flex items-center gap-2">
-                <Coins className="h-6 w-6 text-primary" />
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="flex-1">
+              <CardTitle className="text-xl sm:text-2xl flex items-center gap-2">
+                <Coins className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
                 Distribution Management
               </CardTitle>
-              <CardDescription className="mt-2">
+              <CardDescription className="mt-2 text-sm">
                 Automated weekly rewards for BTC1 holders
               </CardDescription>
             </div>
             <Badge
               variant={finalCanDistribute ? "default" : "secondary"}
-              className={finalCanDistribute ? "bg-green-500 text-white" : ""}
+              className={`${finalCanDistribute ? "bg-green-500 text-white" : ""} shrink-0`}
             >
               {finalCanDistribute ? '✓ Ready' : '⏰ Waiting'}
             </Badge>
@@ -1422,7 +1422,7 @@ This action cannot be undone. Continue?`;
 
       {/* Advanced Options */}
       <Tabs defaultValue="manual" className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-2 md:grid-cols-4">
           <TabsTrigger value="manual">Manual Steps</TabsTrigger>
           <TabsTrigger value="control">Control</TabsTrigger>
           <TabsTrigger value="history">History</TabsTrigger>
@@ -1445,15 +1445,15 @@ This action cannot be undone. Continue?`;
                   <div className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-500 text-white font-bold">
                     1
                   </div>
-                  <h3 className="text-lg font-semibold">Execute Distribution</h3>
+                  <h3 className="text-base sm:text-lg font-semibold">Execute Distribution</h3>
                 </div>
-                <p className="text-sm text-muted-foreground ml-10">
+                <p className="text-sm text-muted-foreground ml-4 sm:ml-10">
                   Trigger the weekly reward minting based on collateral ratio
                 </p>
 
                 {/* Execution Requirements Alert */}
                 {!canExecuteDistribution && (
-                  <Alert className="ml-10 mt-2 bg-blue-500/10 border-blue-500/30">
+                  <Alert className="ml-4 sm:ml-10 mt-2 bg-blue-500/10 border-blue-500/30">
                     <AlertCircle className="h-4 w-4 text-blue-400" />
                     <AlertTitle className="text-blue-400 font-semibold">Distribution Requirements</AlertTitle>
                     <AlertDescription className="mt-2 space-y-2 text-sm text-gray-300">
@@ -1491,7 +1491,7 @@ This action cannot be undone. Continue?`;
                   </Alert>
                 )}
 
-                <div className="ml-10">
+                <div className="ml-4 sm:ml-10">
                   <Button
                     onClick={handleExecuteDistribution}
                     disabled={!canExecuteDistribution || isExecuting || isConfirming}
@@ -1520,12 +1520,12 @@ This action cannot be undone. Continue?`;
                   <div className="flex items-center justify-center w-8 h-8 rounded-full bg-purple-500 text-white font-bold">
                     2
                   </div>
-                  <h3 className="text-lg font-semibold">Generate Merkle Tree</h3>
+                  <h3 className="text-base sm:text-lg font-semibold">Generate Merkle Tree</h3>
                 </div>
-                <p className="text-sm text-muted-foreground ml-10">
+                <p className="text-sm text-muted-foreground ml-4 sm:ml-10">
                   Calculate rewards for all holders and create merkle proof
                 </p>
-                <div className="ml-10">
+                <div className="ml-4 sm:ml-10">
                   <Button
                     onClick={handleGenerateMerkleTree}
                     disabled={loading}
@@ -1554,12 +1554,12 @@ This action cannot be undone. Continue?`;
                   <div className="flex items-center justify-center w-8 h-8 rounded-full bg-green-500 text-white font-bold">
                     3
                   </div>
-                  <h3 className="text-lg font-semibold">Set Merkle Root</h3>
+                  <h3 className="text-base sm:text-lg font-semibold">Set Merkle Root</h3>
                 </div>
-                <p className="text-sm text-muted-foreground ml-10">
+                <p className="text-sm text-muted-foreground ml-4 sm:ml-10">
                   Submit the merkle root to enable claims
                 </p>
-                <div className="ml-10 space-y-3">
+                <div className="ml-4 sm:ml-10 space-y-3">
                   <div className="space-y-2">
                     <Label htmlFor="merkleRoot">Merkle Root</Label>
                     <Input
@@ -1756,7 +1756,7 @@ This action cannot be undone. Continue?`;
                         </div>
 
                         {/* Stats Grid */}
-                        <div className="grid grid-cols-3 gap-4 mb-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
                           <div className="space-y-1">
                             <p className="text-xs text-muted-foreground">Total Rewards</p>
                             <p className="font-semibold text-sm">{formatUnits(BigInt(dist.totalRewards || 0), 8)} BTC1</p>

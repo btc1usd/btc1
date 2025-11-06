@@ -92,9 +92,9 @@ export default function DistributionAdmin({ collateralRatio, totalSupply }: Dist
       </div>
 
       {/* Merkle Distribution Management */}
-      <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-lg p-4 border border-gray-700 shadow-xl">
-        <h3 className="text-lg font-semibold text-white mb-2 flex items-center gap-2">
-          <Gift className="w-5 h-5 text-purple-400" />
+      <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-lg p-3 sm:p-4 border border-gray-700 shadow-xl">
+        <h3 className="text-base sm:text-lg font-semibold text-white mb-2 flex items-center gap-2">
+          <Gift className="w-4 h-4 sm:w-5 sm:h-5 text-purple-400" />
           Merkle Distribution Control
         </h3>
         <p className="text-gray-400 text-sm mb-4">

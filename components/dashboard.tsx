@@ -2713,11 +2713,11 @@ function Dashboard() {
         </header>
 
         {/* Content */}
-        <main className="p-6">
+        <main className="p-4 sm:p-6">
           {activeTab === "overview" && (
             <div className="space-y-6">
               <div className="mb-6">
-                <h2 className="text-2xl font-bold text-foreground mb-2">
+                <h2 className="text-xl sm:text-2xl font-bold text-foreground mb-2">
                   Overview
                 </h2>
                 <p className="text-muted-foreground">
@@ -2746,7 +2746,7 @@ function Dashboard() {
                     </p>
                     <Button
                       onClick={() => setActiveTab("mint")}
-                      className="w-1/3 h-12 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold shadow-lg shadow-green-500/20"
+                      className="w-full sm:w-auto sm:px-8 h-12 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold shadow-lg shadow-green-500/20"
                     >
                       BUY
                     </Button>
@@ -2774,7 +2774,7 @@ function Dashboard() {
                     </p>
                     <Button
                       onClick={() => setActiveTab("mint")}
-                      className="w-1/3 h-12 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-bold shadow-lg shadow-red-500/20"
+                      className="w-full sm:w-auto sm:px-8 h-12 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-bold shadow-lg shadow-red-500/20"
                     >
                       SELL
                     </Button>
@@ -2801,7 +2801,7 @@ function Dashboard() {
                     <Button
                       onClick={() => setActiveTab("merkle-claim")}
                       disabled={!hasClaimableRewards}
-                      className="w-1/3 h-12 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold shadow-lg shadow-orange-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-full sm:w-auto sm:px-8 h-12 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold shadow-lg shadow-orange-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       CLAIM
                     </Button>
@@ -2827,7 +2827,7 @@ function Dashboard() {
                     </p>
                     <Button
                       onClick={() => setActiveTab("governance")}
-                      className="w-1/3 h-12 bg-white hover:bg-gray-100 text-black font-bold shadow-lg"
+                      className="w-full sm:w-auto sm:px-8 h-12 bg-white hover:bg-gray-100 text-black font-bold shadow-lg"
                     >
                       VOTE
                     </Button>

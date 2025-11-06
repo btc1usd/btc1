@@ -116,6 +116,41 @@ const formatBTC1USD = (amount: number): string => {
   }).format(amount);
 };
 
+// Merkle Distributor ABI for checking claims
+const MERKLE_DISTRIBUTOR_ABI = [
+  {
+    inputs: [
+      { internalType: "uint256", name: "distributionId", type: "uint256" },
+      { internalType: "uint256", name: "index", type: "uint256" },
+    ],
+    name: "isClaimed",
+    outputs: [{ internalType: "bool", name: "", type: "bool" }],
+    stateMutability: "view",
+    type: "function",
+  },
+] as const;
+
+interface MerkleClaim {
+  index: number;
+  account: string;
+  amount: string;
+  proof: string[];
+}
+
+interface UserDistribution {
+  id: number;
+  merkleRoot: string;
+  totalRewards: string;
+  metadata: {
+    generated: string;
+    activeHolders: number;
+    reclaimed?: boolean;
+    reclaimedAt?: string;
+    reclaimedAmount?: string;
+  };
+  claim: MerkleClaim;
+}
+
 function Dashboard() {
   const { isConnected, address, chainId, connectWallet, disconnectWallet } =
     useWeb3();
@@ -173,6 +208,11 @@ function Dashboard() {
   const [autoHideSidebar, setAutoHideSidebar] = useState(false);
   const isMobile = useIsMobile();
   const [activeProposalsCount, setActiveProposalsCount] = useState(0);
+
+  // Claimable rewards state
+  const [claimableRewards, setClaimableRewards] = useState(0);
+  const [hasClaimableRewards, setHasClaimableRewards] = useState(false);
+  const [userDistributions, setUserDistributions] = useState<any[]>([]);
 
   const handleExecuteDistribution = async () => {
     if (!isConnected || !address) {
@@ -867,6 +907,64 @@ function Dashboard() {
       setUserTbtcBalance(formattedBalance);
     }
   }, [tbtcBalance]);
+
+  // Fetch claimable rewards from API
+  useEffect(() => {
+    const fetchClaimableRewards = async () => {
+      if (!address || !isConnected) {
+        setClaimableRewards(0);
+        setHasClaimableRewards(false);
+        setUserDistributions([]);
+        return;
+      }
+
+      try {
+        const normalizedAddress = address.toLowerCase();
+        const apiUrl = `/api/merkle-distributions/latest?address=${normalizedAddress}`;
+
+        console.log("Fetching claimable rewards from:", apiUrl);
+        const response = await fetch(apiUrl);
+
+        if (!response.ok) {
+          console.error("Failed to fetch distributions:", response.status);
+          return;
+        }
+
+        const data: {
+          address: string;
+          count: number;
+          userDistributions: UserDistribution[];
+        } = await response.json();
+
+        console.log("Distributions data:", data);
+        setUserDistributions(data.userDistributions);
+
+        // Calculate total potential claimable rewards
+        // Note: Actual claim status is verified on the claim page
+        let totalClaimable = 0;
+
+        if (data.userDistributions && data.userDistributions.length > 0) {
+          for (const dist of data.userDistributions) {
+            const amount = parseFloat(formatUnits(BigInt(dist.claim.amount), 8));
+            totalClaimable += amount;
+          }
+
+          console.log("Total potential claimable rewards:", totalClaimable);
+          setClaimableRewards(totalClaimable);
+          setHasClaimableRewards(totalClaimable > 0);
+        } else {
+          setClaimableRewards(0);
+          setHasClaimableRewards(false);
+        }
+      } catch (error) {
+        console.error("Error fetching claimable rewards:", error);
+        setClaimableRewards(0);
+        setHasClaimableRewards(false);
+      }
+    };
+
+    fetchClaimableRewards();
+  }, [address, isConnected]);
 
   // Update protocol state with real contract data
   useEffect(() => {
@@ -2683,7 +2781,7 @@ function Dashboard() {
                   </CardContent>
                 </Card>
 
-                {/* Rewards Card */}
+                {/* Rewards Card - Always visible */}
                 <Card className="bg-gradient-to-br from-gray-800 to-gray-900 border-gray-700 shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden">
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="text-sm font-medium text-gray-300">
@@ -2695,16 +2793,15 @@ function Dashboard() {
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="text-2xl font-bold text-white">
-                      {userBalance > 0
-                        ? `$${(userBalance * weeklyReward).toFixed(4)}`
-                        : "$0.0000"}
+                      {formatBTC1USD(claimableRewards)} BTC1
                     </div>
                     <p className="text-xs text-gray-400 mt-1">
-                      Rewards Due
+                      {hasClaimableRewards ? "Available to Claim" : "No Rewards Available"}
                     </p>
                     <Button
                       onClick={() => setActiveTab("merkle-claim")}
-                      className="w-1/3 h-12 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold shadow-lg shadow-orange-500/20"
+                      disabled={!hasClaimableRewards}
+                      className="w-1/3 h-12 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold shadow-lg shadow-orange-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       CLAIM
                     </Button>
@@ -2806,11 +2903,11 @@ function Dashboard() {
                   </CardContent>
                 </Card>
 
-                {/* Latest Reward */}
+                {/* Claimable Distributions - Always visible */}
                 <Card className="bg-gradient-to-br from-gray-800 to-gray-900 border-gray-700 shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden">
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="text-sm font-medium text-gray-300">
-                      Latest Reward
+                      Pending Claims
                     </CardTitle>
                     <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center">
                       <Gift className="h-4 w-4 text-white" />
@@ -2818,12 +2915,14 @@ function Dashboard() {
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="text-2xl font-bold text-purple-500">
-                      {userBalance > 0
-                        ? `$${(userBalance * weeklyReward).toFixed(4)}`
-                        : "$0.0000"}
+                      {userDistributions.length}
                     </div>
                     <p className="text-xs text-gray-400 mt-1">
-                      {(weeklyReward * 100).toFixed(1)}¢ per token
+                      {userDistributions.length === 0
+                        ? "No pending distributions"
+                        : userDistributions.length === 1
+                        ? '1 Distribution available'
+                        : `${userDistributions.length} Distributions available`}
                     </p>
                   </CardContent>
                 </Card>

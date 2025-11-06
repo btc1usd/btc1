@@ -85,17 +85,21 @@ export function useRecentActivity() {
           console.log('Mint check:', { logUser: log.args.user, currentUser: address, isMatch })
           return isMatch
         })
-        .map((log: any) => ({
-          id: `mint-${log.transactionHash}-${log.logIndex}`,
-          type: 'mint' as const,
-          title: 'Minted BTC1USD',
-          description: `Deposited ${formatUnits(log.args.btcAmount || 0n, 8)} BTC`,
-          amount: `+${formatUnits(log.args.tokensIssued || 0n, 8)} BTC1USD`,
-          timestamp: Date.now(),
-          txHash: log.transactionHash,
-          icon: 'plus' as const,
-          color: 'green' as const
-        }))
+        .map((log: any) => {
+          const btcAmount = parseFloat(formatUnits(log.args.btcAmount || 0n, 8)).toFixed(2)
+          const tokenAmount = parseFloat(formatUnits(log.args.tokensIssued || 0n, 8)).toFixed(2)
+          return {
+            id: `mint-${log.transactionHash}-${log.logIndex}`,
+            type: 'mint' as const,
+            title: 'Minted BTC1',
+            description: `Deposited ${btcAmount} BTC`,
+            amount: `+${tokenAmount} BTC1`,
+            timestamp: Date.now(),
+            txHash: log.transactionHash,
+            icon: 'plus' as const,
+            color: 'green' as const
+          }
+        })
 
       if (newActivities.length > 0) {
         console.log('✅ Adding mint activities:', newActivities)
@@ -122,17 +126,21 @@ export function useRecentActivity() {
           console.log('Redeem check:', { logUser: log.args.user, currentUser: address, isMatch })
           return isMatch
         })
-        .map((log: any) => ({
-          id: `redeem-${log.transactionHash}-${log.logIndex}`,
-          type: 'redeem' as const,
-          title: 'Redeemed BTC1USD',
-          description: `Received ${formatUnits(log.args.btcAmount || 0n, 8)} BTC`,
-          amount: `-${formatUnits(log.args.tokensRedeemed || 0n, 8)} BTC1USD`,
-          timestamp: Date.now(),
-          txHash: log.transactionHash,
-          icon: 'minus' as const,
-          color: 'red' as const
-        }))
+        .map((log: any) => {
+          const btcAmount = parseFloat(formatUnits(log.args.btcAmount || 0n, 8)).toFixed(2)
+          const tokenAmount = parseFloat(formatUnits(log.args.tokensRedeemed || 0n, 8)).toFixed(2)
+          return {
+            id: `redeem-${log.transactionHash}-${log.logIndex}`,
+            type: 'redeem' as const,
+            title: 'Redeemed BTC1',
+            description: `Received ${btcAmount} BTC`,
+            amount: `-${tokenAmount} BTC1`,
+            timestamp: Date.now(),
+            txHash: log.transactionHash,
+            icon: 'minus' as const,
+            color: 'red' as const
+          }
+        })
 
       if (newActivities.length > 0) {
         console.log('✅ Adding redeem activities:', newActivities)
@@ -159,17 +167,20 @@ export function useRecentActivity() {
           console.log('Claim check:', { logAccount: log.args.account, currentUser: address, isMatch })
           return isMatch
         })
-        .map((log: any) => ({
-          id: `claim-${log.transactionHash}-${log.logIndex}`,
-          type: 'claim' as const,
-          title: 'Claimed Rewards',
-          description: `Claimed successfully`,
-          amount: `+${formatUnits(log.args.amount || 0n, 8)} BTC1USD`,
-          timestamp: Date.now(),
-          txHash: log.transactionHash,
-          icon: 'gift' as const,
-          color: 'orange' as const
-        }))
+        .map((log: any) => {
+          const claimAmount = parseFloat(formatUnits(log.args.amount || 0n, 8)).toFixed(2)
+          return {
+            id: `claim-${log.transactionHash}-${log.logIndex}`,
+            type: 'claim' as const,
+            title: 'Claimed Rewards',
+            description: `Claimed successfully`,
+            amount: `+${claimAmount} BTC1`,
+            timestamp: Date.now(),
+            txHash: log.transactionHash,
+            icon: 'gift' as const,
+            color: 'orange' as const
+          }
+        })
 
       if (newActivities.length > 0) {
         console.log('✅ Adding claim activities:', newActivities)
@@ -190,17 +201,20 @@ export function useRecentActivity() {
     eventName: 'WeeklyDistribution',
     onLogs(logs: any[]) {
       console.log('📅 Distribution event detected:', logs)
-      const newActivities = logs.map((log: any) => ({
-        id: `distribution-${log.transactionHash}-${log.logIndex}`,
-        type: 'distribution' as const,
-        title: 'Weekly Distribution',
-        description: `Distribution #${log.args.distributionId} executed`,
-        amount: `${formatUnits(log.args.rewardPerToken || 0n, 18)}¢ per token`,
-        timestamp: Date.now(),
-        txHash: log.transactionHash,
-        icon: 'calendar' as const,
-        color: 'blue' as const
-      }))
+      const newActivities = logs.map((log: any) => {
+        const rewardPerToken = parseFloat(formatUnits(log.args.rewardPerToken || 0n, 18)).toFixed(2)
+        return {
+          id: `distribution-${log.transactionHash}-${log.logIndex}`,
+          type: 'distribution' as const,
+          title: 'Weekly Distribution',
+          description: `Distribution #${log.args.distributionId} executed`,
+          amount: `${rewardPerToken}¢ per token`,
+          timestamp: Date.now(),
+          txHash: log.transactionHash,
+          icon: 'calendar' as const,
+          color: 'blue' as const
+        }
+      })
 
       if (newActivities.length > 0) {
         console.log('✅ Adding distribution activities:', newActivities)

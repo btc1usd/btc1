@@ -151,17 +151,48 @@ export default function DistributionAdmin({ collateralRatio, totalSupply }: Dist
         </CardContent>
       </Card>
 
+      {/* Distribution Schedule - User Info */}
+      <Card className="bg-gradient-to-br from-blue-900/20 to-purple-900/20 border-blue-500/30 shadow-xl">
+        <CardHeader>
+          <CardTitle className="text-white text-sm flex items-center gap-2">
+            <AlertCircle className="h-4 w-4" />
+            Weekly Distribution Schedule
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3 text-sm text-gray-300">
+          <div className="p-3 bg-blue-500/10 rounded-lg border border-blue-500/20">
+            <div className="font-semibold text-blue-400 mb-2">When do distributions happen?</div>
+            <div className="space-y-1 text-xs">
+              <div>• Distributions occur <strong>weekly</strong>, at least 7 days apart</div>
+              <div>• Each week becomes available starting <strong>Friday at 14:00 UTC</strong></div>
+              <div>• Once available, admin can execute <strong>anytime</strong> (no deadline)</div>
+              <div>• Requires collateral ratio <strong>≥ 112%</strong> to proceed</div>
+            </div>
+          </div>
+
+          <div className="p-3 bg-purple-500/10 rounded-lg border border-purple-500/20">
+            <div className="font-semibold text-purple-400 mb-2">How do rewards work?</div>
+            <div className="space-y-1 text-xs">
+              <div>• Higher collateral ratio = higher rewards (1¢-10¢ per BTC1 weekly)</div>
+              <div>• Rewards are distributed proportionally to all BTC1 holders</div>
+              <div>• After distribution, claim your rewards via Merkle Claim tab</div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Admin Instructions */}
       <Card className="bg-gradient-to-br from-gray-800 to-gray-900 border-gray-700 shadow-xl">
         <CardHeader>
           <CardTitle className="text-white text-sm">Admin Instructions</CardTitle>
         </CardHeader>
         <CardContent className="space-y-2 text-sm text-gray-400">
-          <div>• <strong>Weekly Distribution:</strong> Execute anytime after Friday 14:00 UTC (once 7 days passed) when ratio ≥ 112%</div>
-          <div>• <strong>Merkle Tree:</strong> Generate after each distribution execution</div>
-          <div>• <strong>Set Root:</strong> Upload merkle root to enable user claims</div>
+          <div>• <strong>Distribution Window:</strong> Opens Friday 14:00 UTC (after 7 days). No closing time - execute when ready.</div>
+          <div>• <strong>Requirements Check:</strong> Verify collateral ratio ≥ 112% and admin wallet connected</div>
+          <div>• <strong>Execute Distribution:</strong> Mints new BTC1 tokens based on reward tier</div>
+          <div>• <strong>Generate Merkle Tree:</strong> Create distribution data after execution</div>
+          <div>• <strong>Set Root:</strong> Upload merkle root on-chain to enable user claims</div>
           <div>• <strong>Monitor Claims:</strong> Track claim progress and distribution success</div>
-          <div>• <strong>Emergency Controls:</strong> Pause/unpause system if needed</div>
         </CardContent>
       </Card>
     </div>

@@ -3023,8 +3023,6 @@ function Dashboard() {
                 </Card>
               </div>
 
-
-
               {/* Recent Activity and BTC1USD Holders in Same Row */}
               <div className="grid grid-cols-1 gap-6">
                 {/* Recent Activity Card */}

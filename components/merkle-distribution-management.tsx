@@ -1453,42 +1453,44 @@ This action cannot be undone. Continue?`;
 
                 {/* Execution Requirements Alert */}
                 {!canExecuteDistribution && (
-                  <Alert className="ml-2 sm:ml-10 mt-2 mr-2 sm:mr-0 bg-blue-500/10 border-blue-500/30">
-                    <AlertCircle className="h-3 w-3 sm:h-4 sm:w-4 text-blue-400 shrink-0" />
-                    <AlertTitle className="text-blue-400 font-semibold text-xs sm:text-base">Requirements</AlertTitle>
-                    <AlertDescription className="mt-2 space-y-2 text-[10px] sm:text-sm text-gray-300">
-                      <div className="flex items-start gap-1.5 sm:gap-2">
-                        <span className="shrink-0 text-xs sm:text-sm">{finalCanDistribute ? '✅' : '❌'}</span>
-                        <div className="min-w-0 flex-1 overflow-hidden">
-                          <div className="font-semibold text-[10px] sm:text-sm">Time Window:</div>
-                          <div className="text-[9px] sm:text-xs text-gray-400 mt-0.5 sm:mt-1 break-all leading-tight">
-                            {finalCanDistribute
-                              ? 'Ready (7d + Fri 14:00+) ✓'
-                              : 'Need: 7d passed & Fri 14:00+ UTC'}
+                  <div className="ml-2 sm:ml-10 mt-2 mr-2 sm:mr-10">
+                    <Alert className="bg-blue-500/10 border-blue-500/30">
+                      <AlertCircle className="h-3 w-3 sm:h-4 sm:w-4 text-blue-400 shrink-0" />
+                      <AlertTitle className="text-blue-400 font-semibold text-xs sm:text-base">Requirements</AlertTitle>
+                      <AlertDescription className="mt-2 space-y-2 text-[10px] sm:text-sm text-gray-300">
+                        <div className="flex items-start gap-1.5 sm:gap-2">
+                          <span className="shrink-0 text-xs sm:text-sm">{finalCanDistribute ? '✅' : '❌'}</span>
+                          <div className="min-w-0 flex-1 overflow-hidden">
+                            <div className="font-semibold text-[10px] sm:text-sm">Time Window:</div>
+                            <div className="text-[9px] sm:text-xs text-gray-400 mt-0.5 sm:mt-1 break-words leading-tight">
+                              {finalCanDistribute
+                                ? 'Ready (7d + Fri 14:00+) ✓'
+                                : 'Need: 7d passed & Fri 14:00+ UTC'}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                      <div className="flex items-start gap-1.5 sm:gap-2">
-                        <span className="shrink-0 text-xs sm:text-sm">{isCollateralRatioSufficient ? '✅' : '❌'}</span>
-                        <div className="min-w-0 flex-1 overflow-hidden">
-                          <div className="font-semibold text-[10px] sm:text-sm">Collateral:</div>
-                          <div className="text-[9px] sm:text-xs text-gray-400 mt-0.5 sm:mt-1 break-all leading-tight">
-                            {collateralRatio ? `${(collateralRatio * 100).toFixed(1)}%` : 'N/A'}
-                            {isCollateralRatioSufficient ? ' ✓' : ' (need ≥112%)'}
+                        <div className="flex items-start gap-1.5 sm:gap-2">
+                          <span className="shrink-0 text-xs sm:text-sm">{isCollateralRatioSufficient ? '✅' : '❌'}</span>
+                          <div className="min-w-0 flex-1 overflow-hidden">
+                            <div className="font-semibold text-[10px] sm:text-sm">Collateral:</div>
+                            <div className="text-[9px] sm:text-xs text-gray-400 mt-0.5 sm:mt-1 break-words leading-tight">
+                              {collateralRatio ? `${(collateralRatio * 100).toFixed(1)}%` : 'N/A'}
+                              {isCollateralRatioSufficient ? ' ✓' : ' (need ≥112%)'}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                      <div className="flex items-start gap-1.5 sm:gap-2">
-                        <span className="shrink-0 text-xs sm:text-sm">{isAdmin() ? '✅' : '❌'}</span>
-                        <div className="min-w-0 flex-1 overflow-hidden">
-                          <div className="font-semibold text-[10px] sm:text-sm">Admin:</div>
-                          <div className="text-[9px] sm:text-xs text-gray-400 mt-0.5 sm:mt-1 break-all leading-tight">
-                            {isAdmin() ? 'Verified ✓' : 'Not admin'}
+                        <div className="flex items-start gap-1.5 sm:gap-2">
+                          <span className="shrink-0 text-xs sm:text-sm">{isAdmin() ? '✅' : '❌'}</span>
+                          <div className="min-w-0 flex-1 overflow-hidden">
+                            <div className="font-semibold text-[10px] sm:text-sm">Admin:</div>
+                            <div className="text-[9px] sm:text-xs text-gray-400 mt-0.5 sm:mt-1 break-words leading-tight">
+                              {isAdmin() ? 'Verified ✓' : 'Not admin'}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </AlertDescription>
-                  </Alert>
+                      </AlertDescription>
+                    </Alert>
+                  </div>
                 )}
 
                 <div className="ml-4 sm:ml-10">

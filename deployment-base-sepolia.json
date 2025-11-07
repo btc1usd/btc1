@@ -1,55 +1,55 @@
 {
   "network": "base-sepolia",
   "chainId": 84532,
-  "timestamp": "2025-11-05T01:53:59.310Z",
+  "timestamp": "2025-11-07T07:03:12.341Z",
   "deployer": "0x0c8852280df8eF9fCb2a24e9d76f1ee4779773E9",
   "mockTokens": {
-    "wbtc": "0x4cA55b65B6D685A778A7707Af1511C2580FB83BE",
-    "cbbtc": "0xf1c59621be042CB64DA6C0172cA1F06891C20f34",
-    "tbtc": "0xEF5CC86589De75C26cb2Cd4ab78EC6Ed06DDD768"
+    "wbtc": "0xB358276Dc24c1280Dda6Ba5E06EbB79bB20528aa",
+    "cbbtc": "0xAD70F5111Ed7Fbedb667f35e94f71993B2330AB5",
+    "tbtc": "0x50A69D4c926Fcc44f03a710f234486D49fc4385c"
   },
   "wallets": {
-    "devWallet": "0xab204105A2483c7cFD6Eb02c72C2511b2aEAFC09",
-    "endowmentWallet": "0xAf5313Bd27f44f8EeD691969aBf3c794257Ddc31",
-    "merklFeeCollector": "0x01775cEE102B8E72DF511154410896A59B57f657"
+    "devWallet": "0x08AcBF0679A24dDcF04f93F255Fc5d4E08a8AE4d",
+    "endowmentWallet": "0x6BFb7FFCC71dE16Cf6a812d1b9F213E871a6904C",
+    "merklFeeCollector": "0xAc1B24F5CB1C17a97E14306f1A3F03BD38674Ad5"
   },
   "core": {
-    "btc1usd": "0x3D84Ef48da771975C056b0846d18098465d9A2a9",
-    "vault": "0x1a90e7eA069047D68b39e6eC5E3D0E112273C8B5",
-    "chainlinkBTCOracle": "0x0ADC2d7c042A3157080753f4f838714B19DBCA1B",
+    "btc1usd": "0xf9FB909C5841B067D3931cc5413faa08c76f39e4",
+    "vault": "0x73D7a6c6eB4989155329f0F1Ccf8d48aBEA2b36d",
+    "chainlinkBTCOracle": "0x4A95E2f8E91DBfF9f1AfBde9c0fDFe75B834c907",
     "chainlinkFeed": "0x0FB99723Aee6f420beAD13e6bBB79b7E6F034298"
   },
   "distribution": {
-    "merkleDistributor": "0x6a01D5Fd238350D2F2522B8055921Da213e41511",
-    "weeklyDistribution": "0x8B90c9481b4D119b5C3c5C5801590A37657794D4"
+    "merkleDistributor": "0x56718c78BDd65cfa9f2CF03413F29245C41E0c51",
+    "weeklyDistribution": "0x369C0E679446c99b33Dd5c17aa7451b8c9a8eea9"
   },
   "governance": {
-    "endowmentManager": "0xC858e804EDe9003559a9CEE601B78790D0EF4255",
-    "protocolGovernance": "0xB6Ff09Ad34364d81CE332b1248fd9d995D72D7B3",
-    "dao": "0x3535aa1f5552d5eFfDDE00f82bE09F444C564737"
+    "endowmentManager": "0x4f66C57fC65a925aE2a59600EcD8253BD83c3F64",
+    "protocolGovernance": "0x8BEBb8D4A815A7A79997B8049a18Cf0c525F8BC9",
+    "dao": "0x9F6dF8977abe6100F5517165a05E68661AD4DAF7"
   },
   "config": {
     "admin": "0x0c8852280df8eF9fCb2a24e9d76f1ee4779773E9",
-    "devWallet": "0xab204105A2483c7cFD6Eb02c72C2511b2aEAFC09",
-    "endowmentWallet": "0xAf5313Bd27f44f8EeD691969aBf3c794257Ddc31",
-    "merklFeeCollector": "0x01775cEE102B8E72DF511154410896A59B57f657",
+    "devWallet": "0x08AcBF0679A24dDcF04f93F255Fc5d4E08a8AE4d",
+    "endowmentWallet": "0x6BFb7FFCC71dE16Cf6a812d1b9F213E871a6904C",
+    "merklFeeCollector": "0xAc1B24F5CB1C17a97E14306f1A3F03BD38674Ad5",
     "emergencyCouncil": "0x0c8852280df8eF9fCb2a24e9d76f1ee4779773E9",
-    "liveBTCPrice": "99907.44"
+    "liveBTCPrice": "101958.40198"
   },
   "explorerUrls": {
-    "mockWBTC": "https://sepolia.basescan.org/address/0x4cA55b65B6D685A778A7707Af1511C2580FB83BE",
-    "mockCBTC": "https://sepolia.basescan.org/address/0xf1c59621be042CB64DA6C0172cA1F06891C20f34",
-    "mockTBTC": "https://sepolia.basescan.org/address/0xEF5CC86589De75C26cb2Cd4ab78EC6Ed06DDD768",
-    "devWallet": "https://sepolia.basescan.org/address/0xab204105A2483c7cFD6Eb02c72C2511b2aEAFC09",
-    "endowmentWallet": "https://sepolia.basescan.org/address/0xAf5313Bd27f44f8EeD691969aBf3c794257Ddc31",
-    "merklFeeCollector": "https://sepolia.basescan.org/address/0x01775cEE102B8E72DF511154410896A59B57f657",
-    "btc1usd": "https://sepolia.basescan.org/address/0x3D84Ef48da771975C056b0846d18098465d9A2a9",
-    "vault": "https://sepolia.basescan.org/address/0x1a90e7eA069047D68b39e6eC5E3D0E112273C8B5",
-    "chainlinkBTCOracle": "https://sepolia.basescan.org/address/0x0ADC2d7c042A3157080753f4f838714B19DBCA1B",
-    "merkleDistributor": "https://sepolia.basescan.org/address/0x6a01D5Fd238350D2F2522B8055921Da213e41511",
-    "weeklyDistribution": "https://sepolia.basescan.org/address/0x8B90c9481b4D119b5C3c5C5801590A37657794D4",
-    "endowmentManager": "https://sepolia.basescan.org/address/0xC858e804EDe9003559a9CEE601B78790D0EF4255",
-    "protocolGovernance": "https://sepolia.basescan.org/address/0xB6Ff09Ad34364d81CE332b1248fd9d995D72D7B3",
-    "dao": "https://sepolia.basescan.org/address/0x3535aa1f5552d5eFfDDE00f82bE09F444C564737"
+    "mockWBTC": "https://sepolia.basescan.org/address/0xB358276Dc24c1280Dda6Ba5E06EbB79bB20528aa",
+    "mockCBTC": "https://sepolia.basescan.org/address/0xAD70F5111Ed7Fbedb667f35e94f71993B2330AB5",
+    "mockTBTC": "https://sepolia.basescan.org/address/0x50A69D4c926Fcc44f03a710f234486D49fc4385c",
+    "devWallet": "https://sepolia.basescan.org/address/0x08AcBF0679A24dDcF04f93F255Fc5d4E08a8AE4d",
+    "endowmentWallet": "https://sepolia.basescan.org/address/0x6BFb7FFCC71dE16Cf6a812d1b9F213E871a6904C",
+    "merklFeeCollector": "https://sepolia.basescan.org/address/0xAc1B24F5CB1C17a97E14306f1A3F03BD38674Ad5",
+    "btc1usd": "https://sepolia.basescan.org/address/0xf9FB909C5841B067D3931cc5413faa08c76f39e4",
+    "vault": "https://sepolia.basescan.org/address/0x73D7a6c6eB4989155329f0F1Ccf8d48aBEA2b36d",
+    "chainlinkBTCOracle": "https://sepolia.basescan.org/address/0x4A95E2f8E91DBfF9f1AfBde9c0fDFe75B834c907",
+    "merkleDistributor": "https://sepolia.basescan.org/address/0x56718c78BDd65cfa9f2CF03413F29245C41E0c51",
+    "weeklyDistribution": "https://sepolia.basescan.org/address/0x369C0E679446c99b33Dd5c17aa7451b8c9a8eea9",
+    "endowmentManager": "https://sepolia.basescan.org/address/0x4f66C57fC65a925aE2a59600EcD8253BD83c3F64",
+    "protocolGovernance": "https://sepolia.basescan.org/address/0x8BEBb8D4A815A7A79997B8049a18Cf0c525F8BC9",
+    "dao": "https://sepolia.basescan.org/address/0x9F6dF8977abe6100F5517165a05E68661AD4DAF7"
   }
 }

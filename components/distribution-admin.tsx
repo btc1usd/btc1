@@ -157,7 +157,7 @@ export default function DistributionAdmin({ collateralRatio, totalSupply }: Dist
           <CardTitle className="text-white text-sm">Admin Instructions</CardTitle>
         </CardHeader>
         <CardContent className="space-y-2 text-sm text-gray-400">
-          <div>• <strong>Weekly Distribution:</strong> Execute every Friday 14:00 UTC when ratio ≥ 112%</div>
+          <div>• <strong>Weekly Distribution:</strong> Execute anytime after Friday 14:00 UTC (once 7 days passed) when ratio ≥ 112%</div>
           <div>• <strong>Merkle Tree:</strong> Generate after each distribution execution</div>
           <div>• <strong>Set Root:</strong> Upload merkle root to enable user claims</div>
           <div>• <strong>Monitor Claims:</strong> Track claim progress and distribution success</div>

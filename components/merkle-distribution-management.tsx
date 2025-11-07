@@ -1338,7 +1338,7 @@ This action cannot be undone. Continue?`;
   const isCollateralRatioSufficient = collateralRatio >= 1.12;
 
   // EXECUTION REQUIREMENTS (ALL must be true):
-  // 1. Smart contract canDistribute() = true (Friday 14:00-15:00 UTC + 7 days passed)
+  // 1. Smart contract canDistribute() = true (7 days passed + Friday 14:00+ UTC)
   // 2. Collateral ratio >= 1.12 (112%)
   // 3. Admin access
   const canExecuteDistribution = finalCanDistribute && isCollateralRatioSufficient && isAdmin();
@@ -1453,37 +1453,37 @@ This action cannot be undone. Continue?`;
 
                 {/* Execution Requirements Alert */}
                 {!canExecuteDistribution && (
-                  <Alert className="ml-4 sm:ml-10 mt-2 bg-blue-500/10 border-blue-500/30">
-                    <AlertCircle className="h-4 w-4 text-blue-400" />
-                    <AlertTitle className="text-blue-400 font-semibold">Distribution Requirements</AlertTitle>
-                    <AlertDescription className="mt-2 space-y-2 text-sm text-gray-300">
-                      <div className="flex items-start gap-2">
-                        {finalCanDistribute ? '✅' : '❌'}
-                        <div>
-                          <div className="font-semibold">Time Window Check:</div>
-                          <div className="text-xs text-gray-400 mt-1">
+                  <Alert className="ml-2 sm:ml-10 mt-2 mr-2 sm:mr-0 bg-blue-500/10 border-blue-500/30">
+                    <AlertCircle className="h-3 w-3 sm:h-4 sm:w-4 text-blue-400 shrink-0" />
+                    <AlertTitle className="text-blue-400 font-semibold text-xs sm:text-base">Requirements</AlertTitle>
+                    <AlertDescription className="mt-2 space-y-2 text-[10px] sm:text-sm text-gray-300">
+                      <div className="flex items-start gap-1.5 sm:gap-2">
+                        <span className="shrink-0 text-xs sm:text-sm">{finalCanDistribute ? '✅' : '❌'}</span>
+                        <div className="min-w-0 flex-1 overflow-hidden">
+                          <div className="font-semibold text-[10px] sm:text-sm">Time Window:</div>
+                          <div className="text-[9px] sm:text-xs text-gray-400 mt-0.5 sm:mt-1 break-all leading-tight">
                             {finalCanDistribute
-                              ? '✓ Ready (Friday 14:00-15:00 UTC window + 7 days passed)'
-                              : '✗ Must be Friday between 14:00-15:00 UTC AND at least 7 days since last distribution'}
+                              ? 'Ready (7d + Fri 14:00+) ✓'
+                              : 'Need: 7d passed & Fri 14:00+ UTC'}
                           </div>
                         </div>
                       </div>
-                      <div className="flex items-start gap-2">
-                        {isCollateralRatioSufficient ? '✅' : '❌'}
-                        <div>
-                          <div className="font-semibold">Collateral Ratio:</div>
-                          <div className="text-xs text-gray-400 mt-1">
-                            Current: {collateralRatio ? `${(collateralRatio * 100).toFixed(2)}%` : 'N/A'}
-                            {isCollateralRatioSufficient ? ' (≥112% ✓)' : ' (Must be ≥112%)'}
+                      <div className="flex items-start gap-1.5 sm:gap-2">
+                        <span className="shrink-0 text-xs sm:text-sm">{isCollateralRatioSufficient ? '✅' : '❌'}</span>
+                        <div className="min-w-0 flex-1 overflow-hidden">
+                          <div className="font-semibold text-[10px] sm:text-sm">Collateral:</div>
+                          <div className="text-[9px] sm:text-xs text-gray-400 mt-0.5 sm:mt-1 break-all leading-tight">
+                            {collateralRatio ? `${(collateralRatio * 100).toFixed(1)}%` : 'N/A'}
+                            {isCollateralRatioSufficient ? ' ✓' : ' (need ≥112%)'}
                           </div>
                         </div>
                       </div>
-                      <div className="flex items-start gap-2">
-                        {isAdmin() ? '✅' : '❌'}
-                        <div>
-                          <div className="font-semibold">Admin Access:</div>
-                          <div className="text-xs text-gray-400 mt-1">
-                            {isAdmin() ? '✓ Verified' : '✗ Not Admin'}
+                      <div className="flex items-start gap-1.5 sm:gap-2">
+                        <span className="shrink-0 text-xs sm:text-sm">{isAdmin() ? '✅' : '❌'}</span>
+                        <div className="min-w-0 flex-1 overflow-hidden">
+                          <div className="font-semibold text-[10px] sm:text-sm">Admin:</div>
+                          <div className="text-[9px] sm:text-xs text-gray-400 mt-0.5 sm:mt-1 break-all leading-tight">
+                            {isAdmin() ? 'Verified ✓' : 'Not admin'}
                           </div>
                         </div>
                       </div>

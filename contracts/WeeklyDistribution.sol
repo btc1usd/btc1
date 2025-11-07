@@ -124,16 +124,22 @@ contract WeeklyDistribution {
     }
 
     function canDistribute() public view returns (bool) {
-        // Production code for weekly distribution on Fridays at 14:00 UTC
-        // Check if it's Friday 14:00 UTC (approximately)
+        // Check if 7 days have passed since last distribution
+        bool intervalPassed = block.timestamp >= lastDistributionTime.add(DISTRIBUTION_INTERVAL);
+        if (!intervalPassed) return false;
+
+        // Once 7 days passed, check if we've reached Friday 14:00 UTC
         uint256 dayOfWeek = (block.timestamp / 86400 + 4) % 7; // 0 = Thursday, 1 = Friday, etc.
         uint256 timeOfDay = block.timestamp % 86400;
-        
-        bool isFriday = dayOfWeek == 1;
-        bool isCorrectTime = timeOfDay >= FRIDAY_14_UTC && timeOfDay < FRIDAY_14_UTC + 3600; // 1-hour window
-        bool intervalPassed = block.timestamp >= lastDistributionTime.add(DISTRIBUTION_INTERVAL);
-        
-        return isFriday && isCorrectTime && intervalPassed;
+
+        // If it's before Friday, not allowed yet
+        if (dayOfWeek < 1) return false;
+
+        // If it's Friday, must be past 14:00 UTC
+        if (dayOfWeek == 1 && timeOfDay < FRIDAY_14_UTC) return false;
+
+        // If it's Friday 14:00+ or any day after Friday (Sat, Sun, Mon, etc.), allowed
+        return true;
     }
 
     function getRewardPerToken(uint256 collateralRatio) public pure returns (uint256) {

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useAccount, useWatchContractEvent } from 'wagmi'
+import { useAccount, useWatchContractEvent, usePublicClient } from 'wagmi'
 import { CONTRACT_ADDRESSES } from '@/lib/contracts'
 import { formatUnits } from 'viem'
 
@@ -70,7 +70,9 @@ const WEEKLY_DISTRIBUTION_ABI = [
 
 export function useRecentActivity() {
   const { address } = useAccount()
+  const publicClient = usePublicClient()
   const [activities, setActivities] = useState<ActivityEvent[]>([])
+  const [isLoading, setIsLoading] = useState(false)
 
   // Watch Mint events
   useWatchContractEvent({
@@ -206,8 +208,8 @@ export function useRecentActivity() {
         return {
           id: `distribution-${log.transactionHash}-${log.logIndex}`,
           type: 'distribution' as const,
-          title: 'Weekly Distribution',
-          description: `Distribution #${log.args.distributionId} executed`,
+          title: 'Distribution Executed',
+          description: `Distribution #${log.args.distributionId} (7-hour cycle)`,
           amount: `${rewardPerToken}¢ per token`,
           timestamp: Date.now(),
           txHash: log.transactionHash,
@@ -228,33 +230,164 @@ export function useRecentActivity() {
     },
   })
 
-  // Load initial activities from localStorage
+  // Fetch historical events from blockchain
   useEffect(() => {
-    const saved = localStorage.getItem(`activities-${address}`)
-    if (saved) {
+    async function fetchHistoricalActivities() {
+      if (!address || !publicClient) {
+        setActivities([])
+        return
+      }
+
+      setIsLoading(true)
       try {
-        const parsed = JSON.parse(saved)
-        // Deduplicate when loading from localStorage
-        const uniqueActivities = Array.from(
-          new Map(parsed.map((a: ActivityEvent) => [a.id, a])).values()
-        ).slice(0, 10)
-        setActivities(uniqueActivities)
-      } catch (e) {
-        console.error('Failed to parse saved activities:', e)
+        const currentBlock = await publicClient.getBlockNumber()
+        // Fetch last 10,000 blocks (approximately last 5-6 hours on Base Sepolia with ~2 sec block time)
+        const fromBlock = currentBlock - 10000n
+
+        const allActivities: ActivityEvent[] = []
+
+        // Fetch Mint events
+        try {
+          const mintLogs = await publicClient.getLogs({
+            address: CONTRACT_ADDRESSES.VAULT as `0x${string}`,
+            event: VAULT_ABI[0],
+            args: {
+              user: address,
+            },
+            fromBlock,
+            toBlock: 'latest',
+          })
+
+          const mintActivities = await Promise.all(mintLogs.map(async (log: any) => {
+            const block = await publicClient.getBlock({ blockNumber: log.blockNumber })
+            const btcAmount = parseFloat(formatUnits(log.args.btcAmount || 0n, 8)).toFixed(2)
+            const tokenAmount = parseFloat(formatUnits(log.args.tokensIssued || 0n, 8)).toFixed(2)
+            return {
+              id: `mint-${log.transactionHash}-${log.logIndex}`,
+              type: 'mint' as const,
+              title: 'Minted BTC1',
+              description: `Deposited ${btcAmount} BTC`,
+              amount: `+${tokenAmount} BTC1`,
+              timestamp: Number(block.timestamp) * 1000,
+              txHash: log.transactionHash,
+              icon: 'plus' as const,
+              color: 'green' as const,
+            }
+          }))
+          allActivities.push(...mintActivities)
+        } catch (error) {
+          console.error('Error fetching mint events:', error)
+        }
+
+        // Fetch Redeem events
+        try {
+          const redeemLogs = await publicClient.getLogs({
+            address: CONTRACT_ADDRESSES.VAULT as `0x${string}`,
+            event: VAULT_ABI[1],
+            args: {
+              user: address,
+            },
+            fromBlock,
+            toBlock: 'latest',
+          })
+
+          const redeemActivities = await Promise.all(redeemLogs.map(async (log: any) => {
+            const block = await publicClient.getBlock({ blockNumber: log.blockNumber })
+            const btcAmount = parseFloat(formatUnits(log.args.btcAmount || 0n, 8)).toFixed(2)
+            const tokenAmount = parseFloat(formatUnits(log.args.tokensRedeemed || 0n, 8)).toFixed(2)
+            return {
+              id: `redeem-${log.transactionHash}-${log.logIndex}`,
+              type: 'redeem' as const,
+              title: 'Redeemed BTC1',
+              description: `Received ${btcAmount} BTC`,
+              amount: `-${tokenAmount} BTC1`,
+              timestamp: Number(block.timestamp) * 1000,
+              txHash: log.transactionHash,
+              icon: 'minus' as const,
+              color: 'red' as const,
+            }
+          }))
+          allActivities.push(...redeemActivities)
+        } catch (error) {
+          console.error('Error fetching redeem events:', error)
+        }
+
+        // Fetch Claim events
+        try {
+          const claimLogs = await publicClient.getLogs({
+            address: CONTRACT_ADDRESSES.MERKLE_DISTRIBUTOR as `0x${string}`,
+            event: DISTRIBUTOR_ABI[0],
+            args: {
+              account: address,
+            },
+            fromBlock,
+            toBlock: 'latest',
+          })
+
+          const claimActivities = await Promise.all(claimLogs.map(async (log: any) => {
+            const block = await publicClient.getBlock({ blockNumber: log.blockNumber })
+            const claimAmount = parseFloat(formatUnits(log.args.amount || 0n, 8)).toFixed(2)
+            return {
+              id: `claim-${log.transactionHash}-${log.logIndex}`,
+              type: 'claim' as const,
+              title: 'Claimed Rewards',
+              description: `Claimed successfully`,
+              amount: `+${claimAmount} BTC1`,
+              timestamp: Number(block.timestamp) * 1000,
+              txHash: log.transactionHash,
+              icon: 'gift' as const,
+              color: 'orange' as const,
+            }
+          }))
+          allActivities.push(...claimActivities)
+        } catch (error) {
+          console.error('Error fetching claim events:', error)
+        }
+
+        // Fetch Distribution events (for all users, not filtered by address)
+        try {
+          const distributionLogs = await publicClient.getLogs({
+            address: CONTRACT_ADDRESSES.WEEKLY_DISTRIBUTION as `0x${string}`,
+            event: WEEKLY_DISTRIBUTION_ABI[0],
+            fromBlock,
+            toBlock: 'latest',
+          })
+
+          const distributionActivities = await Promise.all(distributionLogs.map(async (log: any) => {
+            const block = await publicClient.getBlock({ blockNumber: log.blockNumber })
+            const rewardPerToken = parseFloat(formatUnits(log.args.rewardPerToken || 0n, 18)).toFixed(2)
+            return {
+              id: `distribution-${log.transactionHash}-${log.logIndex}`,
+              type: 'distribution' as const,
+              title: 'Distribution Executed',
+              description: `Distribution #${log.args.distributionId} (7-hour cycle)`,
+              amount: `${rewardPerToken}¢ per token`,
+              timestamp: Number(block.timestamp) * 1000,
+              txHash: log.transactionHash,
+              icon: 'calendar' as const,
+              color: 'blue' as const,
+            }
+          }))
+          allActivities.push(...distributionActivities)
+        } catch (error) {
+          console.error('Error fetching distribution events:', error)
+        }
+
+        // Sort by timestamp (most recent first) and limit to 10
+        const sortedActivities = allActivities
+          .sort((a, b) => b.timestamp - a.timestamp)
+          .slice(0, 10)
+
+        setActivities(sortedActivities)
+      } catch (error) {
+        console.error('Error fetching historical activities:', error)
+      } finally {
+        setIsLoading(false)
       }
     }
-  }, [address])
 
-  // Save activities to localStorage (with deduplication)
-  useEffect(() => {
-    if (address && activities.length > 0) {
-      // Deduplicate before saving
-      const uniqueActivities = Array.from(
-        new Map(activities.map((a: ActivityEvent) => [a.id, a])).values()
-      )
-      localStorage.setItem(`activities-${address}`, JSON.stringify(uniqueActivities))
-    }
-  }, [activities, address])
+    fetchHistoricalActivities()
+  }, [address, publicClient])
 
   // Add periodic deduplication to ensure no duplicates ever persist
   useEffect(() => {
@@ -275,5 +408,5 @@ export function useRecentActivity() {
     return () => clearInterval(deduplicateInterval)
   }, [])
 
-  return { activities }
+  return { activities, isLoading }
 }

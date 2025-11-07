@@ -188,7 +188,7 @@ function Dashboard() {
   };
 
 
-  const { activities } = useRecentActivity();
+  const { activities, isLoading: isLoadingActivities } = useRecentActivity();
   const [account, setAccount] = useState("");
   const [userBalance, setUserBalance] = useState(0);
   const [mintAmount, setMintAmount] = useState("");
@@ -3036,7 +3036,15 @@ function Dashboard() {
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    {activities.length === 0 ? (
+                    {isLoadingActivities ? (
+                      <div className="text-center py-8 text-gray-400">
+                        <Activity className="w-12 h-12 mx-auto mb-3 opacity-50 animate-pulse" />
+                        <p>Loading activities from blockchain...</p>
+                        <p className="text-sm mt-1">
+                          Fetching recent events
+                        </p>
+                      </div>
+                    ) : activities.length === 0 ? (
                       <div className="text-center py-8 text-gray-400">
                         <Activity className="w-12 h-12 mx-auto mb-3 opacity-50" />
                         <p>No recent activity</p>

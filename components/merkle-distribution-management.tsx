@@ -591,7 +591,6 @@ Note: Additional checks (token supply, collateral ratio) are performed during ex
     console.log('Contract address:', WEEKLY_DISTRIBUTION_ADDRESS);
     console.log('Can distribute:', canDistribute);
     console.log('Final can distribute:', finalCanDistribute);
-    console.log('Should be available:', shouldBeAvailable);
     console.log('Is connected:', isConnected);
     console.log('User address:', address);
     console.log('Collateral ratio:', collateralRatio);
@@ -635,7 +634,6 @@ Next available: ${nextTime ? nextTime.toLocaleString() : 'Unknown'}
 Time remaining: ${minutesRemaining > 0 ? `${minutesRemaining} minutes` : 'Available now'}
 
 Contract says canDistribute: ${canDistribute}
-Time-based override: ${shouldBeAvailable}
 
 Please wait and try again or check the contract state.`);
       return;

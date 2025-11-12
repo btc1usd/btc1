@@ -146,9 +146,16 @@ export function WagmiProviderComponent({ children }: { children: ReactNode }) {
     setConfig(getWagmiConfig());
   }, []);
 
-  // Don't render children until mounted to avoid hydration issues
+  // Show a loading state instead of nothing while initializing
   if (!mounted || !config) {
-    return null;
+    return (
+      <div className="min-h-screen bg-background text-foreground flex items-center justify-center">
+        <div className="text-center">
+          <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-primary border-r-transparent mb-4"></div>
+          <p className="text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    );
   }
 
   return (

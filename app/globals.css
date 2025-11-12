@@ -126,6 +126,21 @@
   body {
     @apply bg-background text-foreground;
   }
+  
+  /* Ensure dark mode is visible on all browsers including MetaMask */
+  html.dark body {
+    background-color: oklch(0.12 0.012 240);
+    color: oklch(0.95 0.008 240);
+  }
+  
+  /* Force minimum contrast for text readability */
+  html.dark {
+    color-scheme: dark;
+  }
+  
+  html:not(.dark) {
+    color-scheme: light;
+  }
 }
 
 /* Extra small screen support */

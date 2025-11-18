@@ -1,5 +1,6 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Progress } from "@/components/ui/progress"
@@ -21,10 +22,18 @@ import {
   Area,
   AreaChart,
 } from "recharts"
-import { RefreshCcw, Gift, Heart, Users, Activity, Shield } from "lucide-react"
+import { RefreshCcw, Gift, Heart, Users, Activity, Shield, Calendar, TrendingUp } from "lucide-react"
 import { formatCurrency, formatBTC } from "@/lib/protocol-math"
 import { useAnalyticsData } from "@/hooks/use-analytics-data"
 import { formatUnits } from "viem"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
 
 const formatNumber = (num: number): string => {
   return new Intl.NumberFormat("en-US").format(num)
@@ -88,14 +97,6 @@ export function AnalyticsDashboard({
   // Fetch real analytics data from contracts
   const { collateralData, totalSupply: totalSupplyFromContract, totalHolders, loading, error, refetch } = useAnalyticsData(btcPrice);
 
-  // Use contract data if available, fallback to prop
-  const actualTotalSupply = totalSupplyFromContract > 0n ? Number(totalSupplyFromContract) / 1e8 : totalSupply;
-
-  // Calculate user-specific earnings metrics
-  const lifetimeRewards = userBalance * weeklyReward * (distributionCount ? Number(distributionCount) : 0);
-  const estimatedWeeklyEarnings = userBalance * weeklyReward;
-  const annualizedYield = actualTotalSupply > 0 ? (weeklyReward * 52 / collateralRatio) * 100 : 0;
-
   // Calculate reward tier based on collateral ratio
   const getRewardTier = (ratio: number) => {
     if (ratio >= 2.02) return { name: "Diamond", reward: "10¢", color: "text-cyan-400" };
@@ -110,6 +111,107 @@ export function AnalyticsDashboard({
     if (ratio >= 1.12) return { name: "Tier 1", reward: "1¢", color: "text-red-400" };
     return { name: "No Rewards", reward: "0¢", color: "text-gray-500" };
   };
+
+  // User-specific reward history data
+  const [rewardHistory, setRewardHistory] = useState<any[]>([]);
+  const [isLoadingRewards, setIsLoadingRewards] = useState(false);
+
+  useEffect(() => {
+    const fetchUserRewards = async () => {
+      if (!address) {
+        setRewardHistory([]);
+        return;
+      }
+
+      setIsLoadingRewards(true);
+      try {
+        // Fetch user-specific distributions from API
+        const normalizedAddress = address.toLowerCase();
+        const apiUrl = `/api/merkle-distributions/latest?address=${normalizedAddress}`;
+        console.log('Analytics: Fetching user rewards from', apiUrl);
+        
+        const response = await fetch(apiUrl);
+        
+        if (!response.ok) {
+          console.error('Analytics: API error', response.status);
+          setRewardHistory([]);
+          return;
+        }
+        
+        const data: {
+          address: string;
+          count: number;
+          userDistributions: any[];
+        } = await response.json();
+
+        console.log('Analytics: API response', {
+          address: data.address,
+          count: data.count,
+          distributionsCount: data.userDistributions?.length || 0
+        });
+
+        if (data.userDistributions && data.userDistributions.length > 0) {
+          // Transform user distributions into reward history
+          const userRewards = data.userDistributions.map((dist: any) => {
+            const rewardAmount = parseFloat(formatUnits(BigInt(dist.claim.amount), 8));
+            const distTimestamp = new Date(dist.metadata.generated).getTime();
+            const now = Date.now();
+            const claimWindowEnd = distTimestamp + (10 * 60 * 60 * 1000); // 10-hour claim window
+            const isExpired = now > claimWindowEnd;
+            const isClaimed = dist.claimedOnChain || false;
+            
+            // Determine status
+            let status = 'Claimable';
+            if (isClaimed) {
+              status = 'Claimed';
+            } else if (isExpired) {
+              status = 'Expired';
+            }
+
+            return {
+              id: dist.id,
+              date: new Date(dist.metadata.generated).toLocaleString('en-US', { 
+                month: 'short', 
+                day: 'numeric', 
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+              }),
+              timestamp: distTimestamp,
+              distributionId: dist.id,
+              amount: rewardAmount,
+              tier: getRewardTier(collateralRatio).name,
+              tierReward: getRewardTier(collateralRatio).reward,
+              status: status,
+              collateralRatio: collateralRatio,
+              claimable: !isClaimed && !isExpired,
+            };
+          });
+
+          // Sort by distribution ID descending (newest first)
+          userRewards.sort((a: any, b: any) => b.distributionId - a.distributionId);
+          setRewardHistory(userRewards);
+        } else {
+          setRewardHistory([]);
+        }
+      } catch (error) {
+        console.error('Error fetching user rewards:', error);
+        setRewardHistory([]);
+      } finally {
+        setIsLoadingRewards(false);
+      }
+    };
+
+    fetchUserRewards();
+  }, [address, collateralRatio]);
+
+  // Use contract data if available, fallback to prop
+  const actualTotalSupply = totalSupplyFromContract > 0n ? Number(totalSupplyFromContract) / 1e8 : totalSupply;
+
+  // Calculate user-specific earnings metrics
+  const lifetimeRewards = userBalance * weeklyReward * (distributionCount ? Number(distributionCount) : 0);
+  const estimatedWeeklyEarnings = userBalance * weeklyReward;
+  const annualizedYield = actualTotalSupply > 0 ? (weeklyReward * 52 / collateralRatio) * 100 : 0;
 
   const currentTier = getRewardTier(collateralRatio);
 
@@ -560,6 +662,159 @@ export function AnalyticsDashboard({
               </div>
             </CardContent>
           </Card>
+        </CardContent>
+      </Card>
+
+      {/* ────────────────────────────────────────────────────────────────
+          📜 REWARD HISTORY TABLE
+          ──────────────────────────────────────────────────────────────── */}
+      <Card className="bg-gradient-to-br from-indigo-900/20 to-purple-900/20 border-indigo-500/30">
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-indigo-500/20 flex items-center justify-center">
+                <Calendar className="w-5 h-5 text-indigo-400" />
+              </div>
+              <div>
+                <CardTitle className="text-2xl text-white">My Reward History</CardTitle>
+                <CardDescription className="text-gray-400">
+                  {address ? `Your reward distributions for ${address.slice(0, 6)}...${address.slice(-4)}` : 'Connect wallet to view your rewards'}
+                </CardDescription>
+              </div>
+            </div>
+            {address && (
+              <Badge className="bg-indigo-500/20 text-indigo-400 border-indigo-500/30">
+                {rewardHistory.length} Distribution{rewardHistory.length !== 1 ? 's' : ''}
+              </Badge>
+            )}
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="rounded-lg border border-gray-700 overflow-hidden">
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-gray-800/50 hover:bg-gray-800/50">
+                  <TableHead className="text-gray-300 font-semibold">Distribution ID</TableHead>
+                  <TableHead className="text-gray-300 font-semibold">Date & Time</TableHead>
+                  <TableHead className="text-gray-300 font-semibold">Tier</TableHead>
+                  <TableHead className="text-gray-300 font-semibold">Reward Rate</TableHead>
+                  <TableHead className="text-gray-300 font-semibold text-right">Amount (BTC1)</TableHead>
+                  <TableHead className="text-gray-300 font-semibold text-right">USD Value</TableHead>
+                  <TableHead className="text-gray-300 font-semibold text-center">Status</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {!address ? (
+                  <TableRow>
+                    <TableCell colSpan={7} className="text-center py-12">
+                      <div className="flex flex-col items-center gap-3">
+                        <Users className="w-12 h-12 text-gray-500" />
+                        <p className="text-gray-400 font-medium">Connect your wallet to view reward history</p>
+                        <p className="text-gray-500 text-sm">Your distribution rewards and claims will appear here</p>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ) : isLoadingRewards ? (
+                  <TableRow>
+                    <TableCell colSpan={7} className="text-center py-12">
+                      <div className="flex flex-col items-center gap-3">
+                        <RefreshCcw className="w-8 h-8 text-indigo-400 animate-spin" />
+                        <p className="text-gray-400">Loading your reward history...</p>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ) : rewardHistory.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={7} className="text-center py-12">
+                      <div className="flex flex-col items-center gap-3">
+                        <Gift className="w-12 h-12 text-gray-500" />
+                        <p className="text-gray-400 font-medium">No rewards found for this address</p>
+                        <p className="text-gray-500 text-sm">Hold BTC1 tokens to receive distribution rewards</p>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  rewardHistory.map((reward: any) => (
+                    <TableRow key={reward.id} className="border-gray-700 hover:bg-gray-800/30">
+                      <TableCell className="font-medium text-indigo-400">
+                        #{reward.distributionId}
+                      </TableCell>
+                      <TableCell className="text-gray-300">
+                        {reward.date}
+                      </TableCell>
+                      <TableCell>
+                        <Badge className={`${reward.tier === 'Diamond' ? 'bg-cyan-500/20 text-cyan-400 border-cyan-500/30' : 
+                                          reward.tier === 'Platinum' ? 'bg-slate-500/20 text-slate-300 border-slate-500/30' :
+                                          reward.tier === 'Gold' ? 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30' :
+                                          reward.tier === 'Silver' ? 'bg-gray-500/20 text-gray-400 border-gray-500/30' :
+                                          reward.tier === 'Bronze' ? 'bg-orange-600/20 text-orange-600 border-orange-600/30' :
+                                          'bg-blue-500/20 text-blue-400 border-blue-500/30'}`}>
+                          {reward.tier}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-gray-300">
+                        {reward.tierReward}/token
+                      </TableCell>
+                      <TableCell className="text-right font-medium text-white">
+                        {reward.amount.toFixed(4)}
+                      </TableCell>
+                      <TableCell className="text-right text-green-400 font-medium">
+                        ${(reward.amount * collateralRatio).toFixed(2)}
+                      </TableCell>
+                      <TableCell className="text-center">
+                        <Badge className={`${
+                          reward.status === 'Claimed' ? 'bg-green-500/20 text-green-400 border-green-500/30' :
+                          reward.status === 'Claimable' ? 'bg-orange-500/20 text-orange-400 border-orange-500/30' :
+                          'bg-gray-500/20 text-gray-400 border-gray-500/30'
+                        }`}>
+                          {reward.status}
+                        </Badge>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
+          
+          {/* Summary Stats Below Table */}
+          {rewardHistory.length > 0 && (
+            <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <Card className="bg-gray-800/30 border-gray-700">
+                <CardContent className="pt-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <TrendingUp className="w-4 h-4 text-green-400" />
+                    <span className="text-xs text-gray-400">Total Rewards</span>
+                  </div>
+                  <div className="text-xl font-bold text-green-400">
+                    {rewardHistory.reduce((sum: number, r: any) => sum + r.amount, 0).toFixed(4)} BTC1
+                  </div>
+                </CardContent>
+              </Card>
+              <Card className="bg-gray-800/30 border-gray-700">
+                <CardContent className="pt-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Gift className="w-4 h-4 text-orange-400" />
+                    <span className="text-xs text-gray-400">Claimed</span>
+                  </div>
+                  <div className="text-xl font-bold text-orange-400">
+                    {rewardHistory.filter((r: any) => r.status === 'Claimed').length} / {rewardHistory.length}
+                  </div>
+                </CardContent>
+              </Card>
+              <Card className="bg-gray-800/30 border-gray-700">
+                <CardContent className="pt-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Activity className="w-4 h-4 text-blue-400" />
+                    <span className="text-xs text-gray-400">Avg per Distribution</span>
+                  </div>
+                  <div className="text-xl font-bold text-blue-400">
+                    ${(rewardHistory.reduce((sum: number, r: any) => sum + r.amount, 0) / rewardHistory.length * collateralRatio).toFixed(2)}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>

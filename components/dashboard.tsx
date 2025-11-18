@@ -198,6 +198,7 @@ function Dashboard() {
   const [selectedRedeemCollateral, setSelectedRedeemCollateral] =
     useState("WBTC");
   const [activeTab, setActiveTab] = useState("overview");
+  const [mintSubTab, setMintSubTab] = useState<"buy" | "sell">("buy"); // Sub-tab for mint section
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [userWbtcBalance, setUserWbtcBalance] = useState("0");
   const [userCbbtcBalance, setUserCbbtcBalance] = useState("0");
@@ -2790,7 +2791,10 @@ function Dashboard() {
                       Mint Price
                     </p>
                     <Button
-                      onClick={() => setActiveTab("mint")}
+                      onClick={() => {
+                        setMintSubTab("buy");
+                        setActiveTab("mint");
+                      }}
                       className="w-full sm:w-auto sm:px-8 h-12 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold shadow-lg shadow-green-500/20"
                     >
                       BUY
@@ -2818,7 +2822,10 @@ function Dashboard() {
                       {collateralRatio >= 1.1 ? "Sell Price (Healthy)" : "Sell Price (Stress)"}
                     </p>
                     <Button
-                      onClick={() => setActiveTab("mint")}
+                      onClick={() => {
+                        setMintSubTab("sell");
+                        setActiveTab("mint");
+                      }}
                       className="w-full sm:w-auto sm:px-8 h-12 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-bold shadow-lg shadow-red-500/20"
                     >
                       SELL
@@ -3356,9 +3363,29 @@ function Dashboard() {
                 </p>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Mint BTC1 */}
-                <Card className="bg-gradient-to-br from-gray-800 to-gray-900 border-gray-700 shadow-xl">
+              {/* Buy/Sell Tabs */}
+              <Tabs value={mintSubTab} onValueChange={(value) => setMintSubTab(value as "buy" | "sell")} className="w-full">
+                <TabsList className="grid w-full grid-cols-2 max-w-md mx-auto mb-6">
+                  <TabsTrigger 
+                    value="buy"
+                    className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-green-500 data-[state=active]:to-green-600 data-[state=active]:text-white"
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    Buy
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="sell"
+                    className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-red-500 data-[state=active]:to-red-600 data-[state=active]:text-white"
+                  >
+                    <ArrowDownRight className="w-4 h-4 mr-2" />
+                    Sell
+                  </TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="buy">
+                  <div className="max-w-2xl mx-auto">
+                    {/* Mint BTC1 */}
+                    <Card className="bg-gradient-to-br from-gray-800 to-gray-900 border-gray-700 shadow-xl">
                   <CardHeader className="pb-4">
                     <div className="flex items-center justify-between">
                       <div>
@@ -3672,9 +3699,13 @@ function Dashboard() {
                     )}
                   </CardContent>
                 </Card>
+                  </div>
+                </TabsContent>
 
-                {/* Redeem BTC1 */}
-                <Card className="bg-gradient-to-br from-gray-800 to-gray-900 border-gray-700 shadow-xl">
+                <TabsContent value="sell">
+                  <div className="max-w-2xl mx-auto">
+                    {/* Redeem BTC1 */}
+                    <Card className="bg-gradient-to-br from-gray-800 to-gray-900 border-gray-700 shadow-xl">
                   <CardHeader className="pb-4">
                     <div className="flex items-center justify-between">
                       <div>
@@ -3987,7 +4018,9 @@ function Dashboard() {
                     </div>
                   </CardContent>
                 </Card>
-              </div>
+                  </div>
+                </TabsContent>
+              </Tabs>
 
               {/* Single Transaction Status Message - Visible to both Buy and Sell */}
               {transactionStatus && (

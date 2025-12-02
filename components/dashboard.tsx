@@ -277,9 +277,9 @@ function Dashboard() {
   const calculateMintDetails = (btcAmount: number) => {
     const usdValue = btcAmount * protocolState.btcPrice;
     
-    // Use the current collateral ratio for mint price calculation, but ensure it's at least 1.1
+    // Use the current collateral ratio for mint price calculation, but ensure it's at least 1.2
     // This matches the Vault contract behavior: mintPrice = max(MIN_COLLATERAL_RATIO, totalUSD / totalSupply)
-    const mintPrice = Math.max(1.1, collateralRatio || 1.1);
+    const mintPrice = Math.max(1.2, collateralRatio || 1.2);
 
     const tokensToMint = usdValue / mintPrice;
     const devFee = tokensToMint * 0.01; // 1%
@@ -291,7 +291,7 @@ function Dashboard() {
     const currentCollateralValue = totalCollateralUSD || 0;
     const newCollateralValue = currentCollateralValue + usdValue;
     const newTotalSupply = protocolState.totalSupply + totalMinted;
-    const newRatio = newTotalSupply > 0 ? newCollateralValue / newTotalSupply : 1.1;
+    const newRatio = newTotalSupply > 0 ? newCollateralValue / newTotalSupply : 1.2;
 
     return {
       usdValue,
@@ -2346,7 +2346,7 @@ function Dashboard() {
     const currentCollateralValue = totalCollateralUSD || 0;
 
     // Use minimum collateral ratio for mint price (first mint scenario)
-    const mintPrice = Math.max(1.1, currentRatio);
+    const mintPrice = Math.max(1.2, currentRatio);
 
     // Calculate tokens before fees
     const tokensToMint = usdValue / mintPrice;
@@ -2360,10 +2360,10 @@ function Dashboard() {
     const newTotalSupply = currentSupply + totalToMint;
     const newCollateralValue = currentCollateralValue + usdValue;
     const newRatio =
-      newTotalSupply > 0 ? newCollateralValue / newTotalSupply : 1.1;
+      newTotalSupply > 0 ? newCollateralValue / newTotalSupply : 1.2;
 
     // Check if it meets minimum collateral ratio
-    const minRatio = 1.1;
+    const minRatio = 1.2;
     const wouldFail = newRatio < minRatio;
 
     // Calculate maximum viable amount if current amount would fail
@@ -2784,7 +2784,7 @@ function Dashboard() {
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="text-2xl font-bold text-white">
-                      {formatCurrency(Math.max(1.1, collateralRatio || 1.1), 2)}
+                      {formatCurrency(Math.max(1.2, collateralRatio || 1.2), 2)}
                     </div>
                     <p className="text-xs text-gray-400 mt-1">
                       Mint Price

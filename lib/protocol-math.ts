@@ -73,7 +73,7 @@ export interface DistributionResult {
 export class ProtocolMath {
   // Default parameters (fallback values matching current contract deployment)
   private static readonly DEFAULT_PARAMS: ProtocolParameters = {
-    minCollateralRatio: 1.1,
+    minCollateralRatio: 1.2,
     distributionMinRatio: 1.12,
     stressRedemptionFactor: 0.9,
     devFeeMint: 0.01,

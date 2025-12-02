@@ -45,7 +45,7 @@ async function main() {
 
   // Configuration for Base Sepolia - Using verified Chainlink BTC/USD feed
   const config = {
-    admin: "0x0c8852280df8ef9fcb2a24e9d76f1ee4779773e9",
+    admin: "0x6210FfE7340dC47d5DA4b888e850c036CC6ee835",
     emergencyCouncil: process.env.EMERGENCY_COUNCIL || deployer.address,
     // Verified Base Sepolia Chainlink BTC/USD feed address
     chainlinkBtcUsdFeed: "0x0FB99723Aee6f420beAD13e6bBB79b7E6F034298",

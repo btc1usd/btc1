@@ -2770,7 +2770,7 @@ function Dashboard() {
                 </p>
               </div>
 
-              {/* Quick Action Cards */}
+              {/* Overview Cards - 2 rows of 4 cards */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
                 {/* Buy BTC1 Card */}
                 <Card className="bg-gradient-to-br from-gray-800 to-gray-900 border-gray-700 shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden">
@@ -2832,7 +2832,7 @@ function Dashboard() {
                   </CardContent>
                 </Card>
 
-                {/* Rewards Card - Always visible */}
+                {/* Rewards Card */}
                 <Card className="bg-gradient-to-br from-gray-800 to-gray-900 border-gray-700 shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden">
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="text-sm font-medium text-gray-300">
@@ -2859,55 +2859,6 @@ function Dashboard() {
                   </CardContent>
                 </Card>
 
-                {/* Vote Card */}
-                <Card className="bg-gradient-to-br from-gray-800 to-gray-900 border-gray-700 shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden">
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium text-gray-300">
-                      Vote
-                    </CardTitle>
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-gray-300 to-gray-500 flex items-center justify-center">
-                      <Vote className="h-4 w-4 text-white" />
-                    </div>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="text-2xl font-bold text-white">
-                      {activeProposalsCount}
-                    </div>
-                    <p className="text-xs text-gray-400 mt-1">
-                      Active Proposals
-                    </p>
-                    <Button
-                      onClick={() => setActiveTab("governance")}
-                      className="w-full sm:w-auto sm:px-8 h-12 bg-white hover:bg-gray-100 text-black font-bold shadow-lg"
-                    >
-                      VOTE
-                    </Button>
-                  </CardContent>
-                </Card>
-              </div>
-
-              {/* User Dashboard Statistic Cards */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                {/* Bitcoin Price */}
-                <Card className="bg-gradient-to-br from-gray-800 to-gray-900 border-gray-700 shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden">
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium text-gray-300">
-                      Bitcoin Price
-                    </CardTitle>
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center">
-                      <Bitcoin className="h-4 w-4 text-white" />
-                    </div>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="text-2xl font-bold text-orange-500">
-                      {formatCurrency(protocolState.btcPrice, 0)}
-                    </div>
-                    <p className="text-xs text-gray-400 mt-1">
-                      Live oracle feed
-                    </p>
-                  </CardContent>
-                </Card>
-
                 {/* Your Balance */}
                 <Card className="bg-gradient-to-br from-gray-800 to-gray-900 border-gray-700 shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden">
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -2927,59 +2878,9 @@ function Dashboard() {
                     </p>
                   </CardContent>
                 </Card>
-
-                {/* BTC1 Price */}
-                <Card className="bg-gradient-to-br from-gray-800 to-gray-900 border-gray-700 shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden">
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium text-gray-300">
-                      BTC1 Price
-                    </CardTitle>
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center">
-                      <DollarSign className="h-4 w-4 text-white" />
-                    </div>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="text-2xl font-bold text-green-500">
-                      {protocolState.totalSupply === 0
-                        ? "$1.00"
-                        : formatCurrency(Math.max(1.0, collateralRatio), 2)}
-                    </div>
-                    <p className="text-xs text-gray-400 mt-1">
-                      {protocolState.totalSupply === 0
-                        ? "Initial price"
-                        : collateralRatio >= 1.0
-                        ? "Dynamic pricing"
-                        : "Minimum price"}
-                    </p>
-                  </CardContent>
-                </Card>
-
-                {/* Claimable Distributions - Always visible */}
-                <Card className="bg-gradient-to-br from-gray-800 to-gray-900 border-gray-700 shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden">
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium text-gray-300">
-                      Pending Claims
-                    </CardTitle>
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center">
-                      <Gift className="h-4 w-4 text-white" />
-                    </div>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="text-2xl font-bold text-purple-500">
-                      {claimableDistributionCount}
-                    </div>
-                    <p className="text-xs text-gray-400 mt-1">
-                      {claimableDistributionCount === 0
-                        ? "No claimable distributions"
-                        : claimableDistributionCount === 1
-                        ? '1 Distribution ready to claim'
-                        : `${claimableDistributionCount} Distributions ready to claim`}
-                    </p>
-                  </CardContent>
-                </Card>
               </div>
 
-              {/* Additional User Cards */}
+              {/* Second Row - Statistics Cards */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 {/* BTC Collateral */}
                 <Card className="bg-gradient-to-br from-gray-800 to-gray-900 border-gray-700 shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden">
@@ -3038,7 +2939,7 @@ function Dashboard() {
                         : formatPercentage(collateralRatio, 1)}
                     </div>
                     <p className="text-xs text-gray-400 mt-1">
-                      {healthStatus.status}
+                      Bitcoin Price: {formatCurrency(protocolState.btcPrice, 0)}
                     </p>
                   </CardContent>
                 </Card>
@@ -3361,8 +3262,6 @@ function Dashboard() {
                   Deposit collateral to buy coins or sell them back for BTC
                 </p>
               </div>
-
-              {/* Buy/Sell Tabs */}
               <Tabs value={mintSubTab} onValueChange={(value) => setMintSubTab(value as "buy" | "sell")} className="w-full">
                 <TabsList className="grid w-full grid-cols-2 max-w-md mx-auto mb-6">
                   <TabsTrigger 

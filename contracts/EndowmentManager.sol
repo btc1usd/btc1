@@ -69,13 +69,14 @@ contract EndowmentManager is ReentrancyGuard {
     mapping(uint256 => mapping(address => bool)) public hasVoted;
     uint256 public proposalCount;
     uint256 public constant VOTING_PERIOD = 7 days;
-    
+
     // FIXED: Corrected to 8 decimals (was 18)
     uint256 public constant PROPOSAL_THRESHOLD = 1000 * 10**8; // 1000 BTC1USD with 8 decimals
-    
+
     uint256 public totalEndowmentBalance;
     uint256 public lastDistributionTime;
-    uint256 public constant DISTRIBUTION_INTERVAL = 7 days;
+    // TESTING: 7 hours distribution interval (TODO: Change back to 7 days for production)
+    uint256 public constant DISTRIBUTION_INTERVAL = 7 hours;
     
     struct MonthlyDistribution {
         uint256 timestamp;

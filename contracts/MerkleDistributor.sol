@@ -22,7 +22,8 @@ contract MerkleDistributor is IMerkleDistributor, ReentrancyGuard, Ownable {
     address public admin;
     address public weeklyDistribution;
 
-    uint256 public constant CLAIM_PERIOD = 365 days;
+    // TESTING: 10 hours claim period (TODO: Change back to 365 days for production)
+    uint256 public constant CLAIM_PERIOD = 10 hours;
     
     uint256 public currentDistributionId;
     uint256 public totalTokensInCurrentDistribution;

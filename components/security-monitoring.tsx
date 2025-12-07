@@ -6,6 +6,10 @@ import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { CheckCircle, AlertTriangle, Shield, Clock, Activity, Zap, Lock, Eye } from "lucide-react"
 import { formatPercentage } from "@/lib/protocol-math"
+import { useAccount, useWriteContract, useWaitForTransactionReceipt } from "wagmi"
+import { useState } from "react"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import CONTRACT_ADDRESSES from "@/contracts/contract-addresses.json"
 
 interface SecurityMonitoringProps {
   isAdmin: boolean
@@ -13,6 +17,43 @@ interface SecurityMonitoringProps {
 }
 
 export function SecurityMonitoring({ isAdmin, collateralRatio }: SecurityMonitoringProps) {
+  const { address } = useAccount()
+  const [emergencyCouncilStatus, setEmergencyCouncilStatus] = useState<string>("")
+  const { data: hash, writeContract, isPending } = useWriteContract()
+  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash })
+  
+  const ADMIN_ADDRESS = "0x6210FfE7340dC47d5DA4b888e850c036CC6ee835"
+  
+  const handleSetEmergencyCouncilToAdmin = async () => {
+    if (!address) {
+      setEmergencyCouncilStatus("Error: Please connect your wallet")
+      return
+    }
+    
+    if (address.toLowerCase() !== ADMIN_ADDRESS.toLowerCase()) {
+      setEmergencyCouncilStatus("Error: Only admin can perform this action")
+      return
+    }
+    
+    try {
+      setEmergencyCouncilStatus("Preparing transaction...")
+      writeContract({
+        address: CONTRACT_ADDRESSES.PROTOCOL_GOVERNANCE as `0x${string}`,
+        abi: [{ 
+          inputs: [{ name: "newCouncil", type: "address" }],
+          name: "setEmergencyCouncil",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        }],
+        functionName: "setEmergencyCouncil",
+        args: [ADMIN_ADDRESS],
+      })
+    } catch (error) {
+      setEmergencyCouncilStatus(`Error: ${error instanceof Error ? error.message : "Unknown error"}`)
+    }
+  }
+  
   // Empty security data - will be populated with real data
   const securityStatus = {
     overallHealth: "healthy",
@@ -115,29 +156,90 @@ export function SecurityMonitoring({ isAdmin, collateralRatio }: SecurityMonitor
             <CardDescription>Critical system controls for emergency situations</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <Button
-                variant="destructive"
-                className="bg-red-600 hover:bg-red-700"
-                disabled={securityStatus.emergencyPaused}
-              >
-                <AlertTriangle className="w-4 h-4 mr-2" />
-                {securityStatus.emergencyPaused ? "System Paused" : "Emergency Pause"}
-              </Button>
-              <Button
-                variant="outline"
-                className="border-yellow-600 text-yellow-600 hover:bg-yellow-600 hover:text-white bg-transparent"
-              >
-                <Lock className="w-4 h-4 mr-2" />
-                Lock Parameters
-              </Button>
-              <Button
-                variant="outline"
-                className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white bg-transparent"
-              >
-                <Eye className="w-4 h-4 mr-2" />
-                Force Oracle Update
-              </Button>
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <Button
+                  variant="destructive"
+                  className="bg-red-600 hover:bg-red-700"
+                  disabled={securityStatus.emergencyPaused}
+                >
+                  <AlertTriangle className="w-4 h-4 mr-2" />
+                  {securityStatus.emergencyPaused ? "System Paused" : "Emergency Pause"}
+                </Button>
+                <Button
+                  variant="outline"
+                  className="border-yellow-600 text-yellow-600 hover:bg-yellow-600 hover:text-white bg-transparent"
+                >
+                  <Lock className="w-4 h-4 mr-2" />
+                  Lock Parameters
+                </Button>
+                <Button
+                  variant="outline"
+                  className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white bg-transparent"
+                >
+                  <Eye className="w-4 h-4 mr-2" />
+                  Force Oracle Update
+                </Button>
+              </div>
+              
+              <div className="border-t border-border/50 pt-4">
+                <h3 className="text-sm font-semibold text-card-foreground mb-3 flex items-center gap-2">
+                  <Shield className="w-4 h-4" />
+                  Emergency Council Management
+                </h3>
+                <div className="space-y-3">
+                  <Button
+                    onClick={handleSetEmergencyCouncilToAdmin}
+                    disabled={isPending || isConfirming || !address || address.toLowerCase() !== ADMIN_ADDRESS.toLowerCase()}
+                    className="w-full md:w-auto bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white"
+                  >
+                    <Shield className="w-4 h-4 mr-2" />
+                    {isPending || isConfirming ? "Processing..." : "Set Emergency Council to Admin"}
+                  </Button>
+                  
+                  {isPending && (
+                    <Alert className="bg-blue-500/10 border-blue-500/50">
+                      <AlertDescription className="text-blue-400">
+                        Waiting for wallet confirmation...
+                      </AlertDescription>
+                    </Alert>
+                  )}
+                  
+                  {isConfirming && (
+                    <Alert className="bg-yellow-500/10 border-yellow-500/50">
+                      <AlertDescription className="text-yellow-400">
+                        Transaction submitted. Waiting for confirmation...
+                      </AlertDescription>
+                    </Alert>
+                  )}
+                  
+                  {isConfirmed && (
+                    <Alert className="bg-green-500/10 border-green-500/50">
+                      <AlertDescription className="text-green-400">
+                        Emergency Council successfully set to admin address!
+                        {hash && (
+                          <a 
+                            href={`https://basescan.org/tx/${hash}`} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="ml-2 underline hover:text-green-300"
+                          >
+                            View transaction
+                          </a>
+                        )}
+                      </AlertDescription>
+                    </Alert>
+                  )}
+                  
+                  {emergencyCouncilStatus && emergencyCouncilStatus.startsWith("Error") && (
+                    <Alert className="bg-red-500/10 border-red-500/50">
+                      <AlertDescription className="text-red-400">
+                        {emergencyCouncilStatus}
+                      </AlertDescription>
+                    </Alert>
+                  )}
+                </div>
+              </div>
             </div>
           </CardContent>
         </Card>

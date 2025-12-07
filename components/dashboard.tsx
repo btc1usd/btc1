@@ -2983,9 +2983,14 @@ function Dashboard() {
               {/* Recent Activity and BTC1USD Holders in Same Row */}
               <div className="grid grid-cols-1 gap-6">
                 {/* Recent Activity Card */}
-                <Card className="bg-gray-800 border-gray-700">
+                <Card className="bg-gradient-to-br from-gray-800 to-gray-900 border-gray-700 shadow-lg">
                   <CardHeader>
-                    <CardTitle className="text-white">Recent Activity</CardTitle>
+                    <CardTitle className="text-white flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center">
+                        <Activity className="w-4 h-4 text-white" />
+                      </div>
+                      Recent Activity
+                    </CardTitle>
                     <CardDescription className="text-gray-400">
                       Latest protocol events and transactions
                     </CardDescription>
@@ -2994,7 +2999,7 @@ function Dashboard() {
                     {isLoadingActivities ? (
                       <div className="text-center py-8 text-gray-400">
                         <Activity className="w-12 h-12 mx-auto mb-3 opacity-50 animate-pulse" />
-                        <p>Loading activities from blockchain...</p>
+                        <p className="text-base font-medium">Loading activities from blockchain...</p>
                         <p className="text-sm mt-1">
                           Fetching recent events
                         </p>
@@ -3002,28 +3007,36 @@ function Dashboard() {
                     ) : activities.length === 0 ? (
                       <div className="text-center py-8 text-gray-400">
                         <Activity className="w-12 h-12 mx-auto mb-3 opacity-50" />
-                        <p>No recent activity</p>
+                        <p className="text-base font-medium">No recent activity</p>
                         <p className="text-sm mt-1">
                           Your transactions will appear here
                         </p>
                       </div>
                     ) : (
-                      <div className="space-y-4 max-h-96 overflow-y-auto pr-2">
+                      <div className="space-y-3 max-h-96 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-transparent">
                         {activities.map((activity) => {
                           const iconMap = {
-                            plus: <ArrowUpRight className="w-4 h-4" />,
-                            minus: <ArrowDownRight className="w-4 h-4" />,
-                            gift: <Gift className="w-4 h-4" />,
-                            calendar: <CalendarCheck className="w-4 h-4" />,
-                            vote: <Vote className="w-4 h-4" />,
+                            plus: <ArrowUpRight className="w-5 h-5" />,
+                            minus: <ArrowDownRight className="w-5 h-5" />,
+                            gift: <Gift className="w-5 h-5" />,
+                            calendar: <CalendarCheck className="w-5 h-5" />,
+                            vote: <Vote className="w-5 h-5" />,
                           };
 
                           const colorMap = {
-                            green: "bg-green-500/10 text-green-500",
-                            red: "bg-red-500/10 text-red-500",
-                            orange: "bg-orange-500/10 text-orange-500",
-                            blue: "bg-blue-500/10 text-blue-500",
-                            purple: "bg-purple-500/10 text-purple-500",
+                            green: "bg-gradient-to-br from-green-500/20 to-green-600/20 text-green-400 border border-green-500/30",
+                            red: "bg-gradient-to-br from-red-500/20 to-red-600/20 text-red-400 border border-red-500/30",
+                            orange: "bg-gradient-to-br from-orange-500/20 to-orange-600/20 text-orange-400 border border-orange-500/30",
+                            blue: "bg-gradient-to-br from-blue-500/20 to-blue-600/20 text-blue-400 border border-blue-500/30",
+                            purple: "bg-gradient-to-br from-purple-500/20 to-purple-600/20 text-purple-400 border border-purple-500/30",
+                          };
+
+                          const textColorMap = {
+                            green: "text-green-400",
+                            red: "text-red-400",
+                            orange: "text-orange-400",
+                            blue: "text-blue-400",
+                            purple: "text-purple-400",
                           };
 
                           const timeAgo = (timestamp: number) => {
@@ -3041,40 +3054,46 @@ function Dashboard() {
                           return (
                             <div
                               key={activity.id}
-                              className="flex items-center space-x-4 p-3 bg-gray-700/30 rounded-lg hover:bg-gray-700/50 transition-colors"
+                              className="flex items-start sm:items-center gap-3 sm:gap-4 p-4 bg-gray-700/30 rounded-xl hover:bg-gray-700/50 transition-all duration-200 border border-transparent hover:border-gray-600/50"
                             >
                               <div
-                                className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                                className={`w-12 h-12 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center flex-shrink-0 ${
                                   colorMap[activity.color]
                                 }`}
                               >
                                 {iconMap[activity.icon]}
                               </div>
                               <div className="flex-1 min-w-0">
-                                <div className="font-medium text-white text-sm truncate">
-                                  {activity.title}
-                                </div>
-                                <div className="text-xs text-gray-400">
-                                  {timeAgo(activity.timestamp)}
-                                </div>
-                              </div>
-                              <div className="text-right">
-                                {activity.amount && (
-                                  <div className="font-medium text-white text-sm">
-                                    {activity.amount}
+                                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-2">
+                                  <div className="font-semibold text-white text-sm sm:text-base">
+                                    {activity.title}
                                   </div>
-                                )}
-                                <div className="text-xs text-gray-400">
-                                  {activity.description}
+                                  {activity.amount && (
+                                    <div className={`font-bold text-base sm:text-lg whitespace-nowrap ${
+                                      textColorMap[activity.color]
+                                    }`}>
+                                      {activity.amount}
+                                    </div>
+                                  )}
+                                </div>
+                                <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 mt-1">
+                                  <span className="text-xs sm:text-sm text-gray-400">
+                                    {activity.description}
+                                  </span>
+                                  <span className="hidden sm:inline text-gray-600">•</span>
+                                  <span className="text-xs text-gray-500">
+                                    {timeAgo(activity.timestamp)}
+                                  </span>
                                 </div>
                                 {activity.txHash && (
                                   <a
                                     href={`https://basescan.org/tx/${activity.txHash}`}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="text-xs text-orange-500 hover:underline"
+                                    className="inline-flex items-center gap-1 mt-2 text-xs sm:text-sm text-orange-500 hover:text-orange-400 font-medium transition-colors"
                                   >
                                     View tx
+                                    <ArrowUpRight className="w-3 h-3" />
                                   </a>
                                 )}
                               </div>

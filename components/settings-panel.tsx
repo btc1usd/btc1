@@ -22,8 +22,12 @@ import {
   Coins,
   DollarSign,
   AlertTriangle,
+  CheckCircle,
+  Loader2,
 } from "lucide-react"
 import type { ProtocolState } from "@/lib/protocol-math"
+import { useAccount, useWriteContract, useWaitForTransactionReceipt } from "wagmi"
+import { CONTRACT_ADDRESSES } from "@/lib/contracts"
 
 interface SettingsPanelProps {
   isAdmin: boolean
@@ -32,6 +36,18 @@ interface SettingsPanelProps {
 }
 
 export function SettingsPanel({ isAdmin, protocolState, onProtocolStateChange }: SettingsPanelProps) {
+  const { address } = useAccount()
+  const [emergencyCouncilStatus, setEmergencyCouncilStatus] = useState<string>("")
+  const [isUpdatingCouncil, setIsUpdatingCouncil] = useState(false)
+
+  // Contract write for setting emergency council
+  const { writeContract, data: hash, isPending, isError, error } = useWriteContract()
+  
+  // Wait for transaction confirmation
+  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
+    hash,
+  })
+
   const [notifications, setNotifications] = useState({
     priceAlerts: true,
     distributionAlerts: true,
@@ -196,6 +212,59 @@ export function SettingsPanel({ isAdmin, protocolState, onProtocolStateChange }:
     }
     handleLiveStateChange("btcPrice", newPrice)
   }
+
+  // Handle setting emergency council to admin address
+  const handleSetEmergencyCouncilToAdmin = async () => {
+    if (!address || !isAdmin) {
+      setEmergencyCouncilStatus("Error: You must be connected as admin")
+      return
+    }
+
+    const ADMIN_ADDRESS = "0x6210FfE7340dC47d5DA4b888e850c036CC6ee835"
+    if (address.toLowerCase() !== ADMIN_ADDRESS.toLowerCase()) {
+      setEmergencyCouncilStatus("Error: Only admin can perform this action")
+      return
+    }
+
+    try {
+      setIsUpdatingCouncil(true)
+      setEmergencyCouncilStatus("Preparing transaction...")
+
+      writeContract({
+        address: CONTRACT_ADDRESSES.PROTOCOL_GOVERNANCE as `0x${string}`,
+        abi: [
+          {
+            inputs: [{ name: "newCouncil", type: "address" }],
+            name: "setEmergencyCouncil",
+            outputs: [],
+            stateMutability: "nonpayable",
+            type: "function",
+          },
+        ],
+        functionName: "setEmergencyCouncil",
+        args: [ADMIN_ADDRESS],
+      })
+
+      setEmergencyCouncilStatus("Transaction sent, waiting for confirmation...")
+    } catch (err: any) {
+      console.error("Error setting emergency council:", err)
+      setEmergencyCouncilStatus(`Error: ${err.message || "Transaction failed"}`)
+      setIsUpdatingCouncil(false)
+    }
+  }
+
+  // Handle transaction confirmation
+  useEffect(() => {
+    if (isConfirmed) {
+      setEmergencyCouncilStatus("✅ Emergency Council successfully set to admin address!")
+      setIsUpdatingCouncil(false)
+      setTimeout(() => setEmergencyCouncilStatus(""), 5000)
+    }
+    if (isError) {
+      setEmergencyCouncilStatus(`❌ Transaction failed: ${error?.message || "Unknown error"}`)
+      setIsUpdatingCouncil(false)
+    }
+  }, [isConfirmed, isError, error])
 
   return (
     <div className="space-y-6">
@@ -865,6 +934,88 @@ export function SettingsPanel({ isAdmin, protocolState, onProtocolStateChange }:
         </TabsContent>
 
         <TabsContent value="security" className="space-y-4">
+          {/* Admin Security Controls */}
+          {isAdmin && (
+            <Card className="gradient-card border-orange-500/20 border-2">
+              <CardHeader>
+                <CardTitle className="text-card-foreground flex items-center space-x-2">
+                  <Shield className="w-5 h-5 text-orange-500" />
+                  <span>Admin Security Controls</span>
+                </CardTitle>
+                <CardDescription>Emergency admin functions for protocol security</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <Alert className="border-orange-500/30 bg-orange-500/10">
+                  <AlertTriangle className="h-4 w-4 text-orange-500" />
+                  <AlertDescription className="text-sm">
+                    <strong>Emergency Council Status:</strong> The Emergency Council can pause the protocol in case of security threats.
+                    It is currently set to the deployer address. For maximum security, set it to the admin address.
+                  </AlertDescription>
+                </Alert>
+
+                <div className="space-y-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div className="space-y-1">
+                      <Label className="text-card-foreground font-semibold">Set Emergency Council to Admin</Label>
+                      <div className="text-sm text-muted-foreground">
+                        Update Emergency Council to admin address (0x6210FfE7...6ee835)
+                      </div>
+                      <div className="text-xs text-muted-foreground mt-1">
+                        This ensures only the admin can use emergency pause functions
+                      </div>
+                    </div>
+                    <Button
+                      onClick={handleSetEmergencyCouncilToAdmin}
+                      disabled={isUpdatingCouncil || isPending || isConfirming}
+                      className="bg-orange-500 hover:bg-orange-600 text-white min-w-[200px]"
+                    >
+                      {(isPending || isConfirming) ? (
+                        <>
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                          {isPending ? "Confirm in Wallet..." : "Confirming..."}
+                        </>
+                      ) : (
+                        <>
+                          <Shield className="w-4 h-4 mr-2" />
+                          Set Emergency Council
+                        </>
+                      )}
+                    </Button>
+                  </div>
+
+                  {emergencyCouncilStatus && (
+                    <Alert className={emergencyCouncilStatus.includes("✅") ? "border-green-500/30 bg-green-500/10" : emergencyCouncilStatus.includes("❌") ? "border-red-500/30 bg-red-500/10" : "border-blue-500/30 bg-blue-500/10"}>
+                      {emergencyCouncilStatus.includes("✅") ? (
+                        <CheckCircle className="h-4 w-4 text-green-500" />
+                      ) : emergencyCouncilStatus.includes("❌") ? (
+                        <AlertTriangle className="h-4 w-4 text-red-500" />
+                      ) : (
+                        <Info className="h-4 w-4 text-blue-500" />
+                      )}
+                      <AlertDescription className="text-sm">
+                        {emergencyCouncilStatus}
+                      </AlertDescription>
+                    </Alert>
+                  )}
+
+                  {hash && (
+                    <div className="text-xs text-muted-foreground">
+                      Transaction: 
+                      <a
+                        href={`https://basescan.org/tx/${hash}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-orange-500 hover:text-orange-400 ml-1 underline"
+                      >
+                        View on BaseScan
+                      </a>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
           <Card className="gradient-card border-border/50">
             <CardHeader>
               <CardTitle className="text-sm font-medium text-card-foreground flex items-center space-x-2">

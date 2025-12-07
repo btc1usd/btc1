@@ -38,9 +38,9 @@ async function main() {
   }
 
   // Verify sufficient balance
-  const minBalance = ethers.parseEther("0.1"); // Minimum 0.1 ETH for mainnet deployment
+  const minBalance = ethers.parseEther("0.001"); // Minimum 0.001 ETH for mainnet deployment
   if (balance < minBalance) {
-    throw new Error("Insufficient balance. Need at least 0.1 ETH for mainnet deployment.");
+    throw new Error("Insufficient balance. Need at least 0.001 ETH for mainnet deployment.");
   }
 
   // Configuration for Base Mainnet

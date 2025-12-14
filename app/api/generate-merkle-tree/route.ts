@@ -178,42 +178,55 @@ const APPROVED_LP_POOLS = [
 // Load deployment configuration - updated to use deploymentresult.json
 const getContractAddresses = () => {
   try {
-    // First try environment variables
+    // First try environment variables (preferred for production)
     const btc1usd = process.env.NEXT_PUBLIC_BTC1USD_CONTRACT;
     const weeklyDistribution = process.env.NEXT_PUBLIC_WEEKLY_DISTRIBUTION_CONTRACT;
     const merkleDistributor = process.env.NEXT_PUBLIC_MERKLE_DISTRIBUTOR_CONTRACT;
 
     if (btc1usd && weeklyDistribution && merkleDistributor) {
+      console.log('✅ Using contract addresses from environment variables');
       return { btc1usd, weeklyDistribution, merkleDistributor };
     }
 
-    // Fallback to deployment file
-    const fs = require('fs');
-    const path = require('path');
+    // Only try file system in non-serverless environments
+    if (typeof window === 'undefined' && !process.env.LAMBDA_TASK_ROOT && !process.env.NETLIFY) {
+      try {
+        const fs = require('fs');
+        const path = require('path');
 
-    // Handle both local and serverless (Netlify) environments
-    const rootPath = process.env.LAMBDA_TASK_ROOT || process.cwd();
-    
-    // Try deploymentresult.json first (Base Sepolia), fallback to deployment-local.json
-    let deploymentPath = path.join(rootPath, 'deploymentresult.json');
-    if (!fs.existsSync(deploymentPath)) {
-      deploymentPath = path.join(rootPath, 'deployment-local.json');
+        const rootPath = process.cwd();
+        
+        // Try deploymentresult.json first (Base Sepolia), fallback to deployment-local.json
+        let deploymentPath = path.join(rootPath, 'deployment-base-mainnet.json');
+        if (!fs.existsSync(deploymentPath)) {
+          deploymentPath = path.join(rootPath, 'deploymentresult.json');
+        }
+        if (!fs.existsSync(deploymentPath)) {
+          deploymentPath = path.join(rootPath, 'deployment-local.json');
+        }
+
+        if (fs.existsSync(deploymentPath)) {
+          const deploymentContent = fs.readFileSync(deploymentPath, 'utf8');
+          const deployment = JSON.parse(deploymentContent);
+
+          // Handle both old and new deployment file structures
+          return {
+            btc1usd: deployment.core?.btc1usd || deployment.contracts?.btc1usd,
+            weeklyDistribution: deployment.distribution?.weeklyDistribution || deployment.contracts?.weeklyDistribution,
+            merkleDistributor: deployment.distribution?.merkleDistributor || deployment.contracts?.merkleDistributor
+          };
+        }
+      } catch (fsError) {
+        console.warn('⚠️ File system access failed (expected in serverless):', fsError instanceof Error ? fsError.message : 'Unknown error');
+      }
     }
 
-    if (!fs.existsSync(deploymentPath)) {
-      console.error('Deployment file not found at:', deploymentPath);
-      return null;
-    }
-
-    const deploymentContent = fs.readFileSync(deploymentPath, 'utf8');
-    const deployment = JSON.parse(deploymentContent);
-
-    // Handle both old and new deployment file structures
-    return {
-      btc1usd: deployment.core?.btc1usd || deployment.contracts?.btc1usd,
-      weeklyDistribution: deployment.distribution?.weeklyDistribution || deployment.contracts?.weeklyDistribution,
-      merkleDistributor: deployment.distribution?.merkleDistributor || deployment.contracts?.merkleDistributor
-    };
+    // If we get here, we must have environment variables or fail
+    console.error('❌ Contract addresses not found. Please set environment variables:');
+    console.error('   NEXT_PUBLIC_BTC1USD_CONTRACT');
+    console.error('   NEXT_PUBLIC_WEEKLY_DISTRIBUTION_CONTRACT');
+    console.error('   NEXT_PUBLIC_MERKLE_DISTRIBUTOR_CONTRACT');
+    return null;
   } catch (error) {
     console.error('Failed to load deployment config:', error);
     return null;
@@ -960,8 +973,8 @@ export async function POST(request: NextRequest) {
       console.log('ℹ️  Supabase not configured');
     }
 
-    // Save to file system as FALLBACK for local development
-    if (!process.env.LAMBDA_TASK_ROOT || !supabaseSuccess) {
+    // Save to file system as FALLBACK for local development only
+    if (!process.env.LAMBDA_TASK_ROOT && !process.env.NETLIFY && !supabaseSuccess) {
       try {
         const fs = require('fs');
         const path = require('path');
@@ -975,19 +988,42 @@ export async function POST(request: NextRequest) {
         const filepath = path.join(merkleDir, filename);
         
         fs.writeFileSync(filepath, JSON.stringify(distributionData, null, 2));
-        console.log(`💾 Saved distribution data to file system (fallback): ${filepath}`);
-        
-        // If Supabase failed but file system succeeded, still consider it a success
-        if (!supabaseSuccess) {
-          console.log('⚠️  Using file system as primary storage since Supabase failed');
-        }
+        console.log(`💾 Saved distribution data to file system (local fallback): ${filepath}`);
       } catch (error) {
-        console.warn('⚠️ Failed to save distribution data to file system:', error);
+        console.warn('⚠️ Failed to save distribution data to file system (expected in serverless):', error instanceof Error ? error.message : 'Unknown error');
         
         // If both Supabase and file system failed, this is a critical error
         if (!supabaseSuccess) {
-          throw new Error('Failed to save distribution to both Supabase and file system');
+          return NextResponse.json(
+            { 
+              error: 'Failed to save distribution',
+              details: 'Both Supabase and file system storage failed. Please check Supabase configuration.',
+              suggestions: [
+                'Verify NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY are set',
+                'Check Supabase connection and permissions',
+                'Ensure merkle_distributions table exists in Supabase'
+              ]
+            },
+            { status: 500 }
+          );
         }
+      }
+    } else if (process.env.LAMBDA_TASK_ROOT || process.env.NETLIFY) {
+      console.log('💁 Serverless environment detected - skipping file system save (Supabase is primary storage)');
+      if (!supabaseSuccess) {
+        return NextResponse.json(
+          { 
+            error: 'Failed to save distribution to Supabase',
+            details: 'Supabase is required in production/serverless environments',
+            suggestions: [
+              'Verify NEXT_PUBLIC_SUPABASE_URL is set correctly',
+              'Verify NEXT_PUBLIC_SUPABASE_ANON_KEY is set correctly',
+              'Check Supabase service status',
+              'Verify merkle_distributions table exists'
+            ]
+          },
+          { status: 500 }
+        );
       }
     }
 

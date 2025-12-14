@@ -172,6 +172,9 @@ const AERODROME_POOL_ABI = [
 // All other smart contracts will be skipped (major performance improvement)
 const APPROVED_LP_POOLS = [
   '0x269251b69fcd1ceb0500a86408cab39666b2077a', // Known BTC1/WETH pool
+  '0x18fd0aaaf8c6e28427b26ac75cc4375e21eb74a0b0ce1b66b8672a11a4c47b3d', // Approved LP pool
+  '0xf669d50334177dc11296b61174955a0216adad38', // Approved LP pool
+  '0x9d3a11303486e7d773f0ddfd2f47c4b374533580', // Approved LP pool
   // Add more approved LP pool addresses here as needed
 ].map(addr => addr.toLowerCase());
 

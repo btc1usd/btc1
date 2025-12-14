@@ -81,6 +81,7 @@ const config: HardhatUserConfig = {
     apiKey: {
       "base-sepolia": process.env.BASESCAN_API_KEY || "",
       base: process.env.BASESCAN_API_KEY || "",
+      "base-mainnet": process.env.BASESCAN_API_KEY || "",
     },
     customChains: [
       {
@@ -89,6 +90,14 @@ const config: HardhatUserConfig = {
         urls: {
           apiURL: "https://api-sepolia.basescan.org/api",
           browserURL: "https://sepolia.basescan.org",
+        },
+      },
+      {
+        network: "base-mainnet",
+        chainId: 8453,
+        urls: {
+          apiURL: "https://api.basescan.org/api",
+          browserURL: "https://basescan.org",
         },
       },
     ],
